@@ -1,4 +1,4 @@
-CLAIMBUSTER_API_KEY=
+CLAIMBUSTER_API_KEY=<replace_this_with_your_api_key>
 
 PATH = './'
 DATA_PATH = PATH + 'Datasets/'
