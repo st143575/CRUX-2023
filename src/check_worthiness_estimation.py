@@ -10,6 +10,7 @@ API: https://idir.uta.edu/claimbuster/api/
 08.08.2023
 """
 
+import os
 import requests
 import json
 from collections import defaultdict
@@ -22,7 +23,7 @@ PATH = '/mount/studenten/projekt-cs/crux2023/'
 RAW_DATA_PATH = PATH + 'Datasets/'
 PREPROCESSED_DATA_PATH = PATH + 'Project/DataPreprocessing/'
 
-API_KEY = "6a13de1b7e2c4b5db3d12576b1a18e0b"
+API_KEY = os.getenv('CLAIMBUSTER_API_KEY')
 
 
 def run_claim_buster(sentence, api_key=API_KEY):
