@@ -106,11 +106,11 @@ def extract_topic(childuid2topic):
         for segmentid, output in segmentid2output.items():
             output = output.split('the answer is ')[-1]
             if "(A)" in output:
-                topic = "COVID-19 vaccine is harmful"
+                topic = topics['topic'].values[0]
             elif "(B)" in output:
-                topic = "Government actions related to the virus"
+                topic = topics['topic'].values[1]
             elif "(C)" in output:
-                topic = "Who is Sick / Who has tested positive"
+                topic = topics['topic'].values[2]
             elif "(D)" in output:
                 topic = "unk"
             else:
@@ -177,11 +177,11 @@ def extract_subtopic(childuid2subtopic):
         for segmentid, output in segmentid2output.items():
             output = output.split('the answer is ')[-1]
             if "(A)" in output:
-                subtopic = "COVID-19 vaccine causes medical conditions"
+                subtopic = topics['subtopic'].values[0]
             elif "(B)" in output:
-                subtopic = "Federal government seizing/diverting PPE and other medical supplies"
+                subtopic = topics['subtopic'].values[1]
             elif "(C)" in output:
-                subtopic = "Who has/had COVID-19"
+                subtopic = topics['subtopic'].values[2]
             elif "(D)" in output:
                 subtopic = "unk"
             else:
