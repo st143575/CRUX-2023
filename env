@@ -1,1 +1,5 @@
 CLAIMBUSTER_API_KEY=
+
+PATH = './'
+DATA_PATH = PATH + 'Datasets/'
+CACHE_DIR = PATH + '/cache/'

@@ -19,9 +19,9 @@ import dill as pickle
 from argparse import ArgumentParser
 
 
-PATH = '/mount/studenten/projekt-cs/crux2023/'
-RAW_DATA_PATH = PATH + 'Datasets/'
-PREPROCESSED_DATA_PATH = PATH + 'Project/DataPreprocessing/'
+PATH = os.getenv('PATH')
+RAW_DATA_PATH = os.getenv('DATA_PATH')
+PREPROCESSED_DATA_PATH = PATH + 'data_preprocessing/'
 
 API_KEY = os.getenv('CLAIMBUSTER_API_KEY')
 
