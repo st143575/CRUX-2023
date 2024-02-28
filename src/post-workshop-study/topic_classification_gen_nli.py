@@ -3,7 +3,7 @@ Claim Sentence Detection.
 Step 2: Topic Classification using zero-shot NLI.
 This is the python script version of claim_sentence_detection.ipynb and should be seen as the end version.
 
-Model: Llama2-Chat-hf
+Model: Llama2-7B-Chat-hf
 Paper: https://arxiv.org/abs/2307.09288
 HuggingFace: https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
 """
