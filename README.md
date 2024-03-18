@@ -6,14 +6,22 @@ skyline2023 at TAC 2023 CRUX.
 
 
 ## Data Preprocessing
-- First, build mappings from the raw datasets by running:
+Preprocess the raw datasets through the following steps:
+
+1. Build mappings from the raw datasets by running:
   ```bash
   cd ./src/data_preprocessing/build_mappings/
   python build_mappings.py -i ../dataset -o ./output
   ```
 
-- Then, translate non-English segments to English by running:
+2. Translate non-English segments to English by running:
   ```bash
   cd ./src/data_preprocessing/translate/
   python translate.py -i ../BuildMappings/outputs -o ./output -m nllb
   ```
+
+3. Create translated documents (rsd files) by running:
+   ```bash
+    cd ./src/data_preprocessing/
+    python create_translated_rsd.py -i ./translate/output -o ./output
+    ```
