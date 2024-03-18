@@ -21,7 +21,7 @@ Preprocess the raw datasets through the following steps:
   ```
 
 3. Create translated documents (rsd files) by running:
-   ```bash
-    cd ./src/data_preprocessing/
-    python create_translated_rsd.py -i ./translate/output -o ./output
-    ```
+  ```bash
+  cd ./src/data_preprocessing/
+  python create_translated_rsd.py -i ./translate/output -o ./output
+  ```
