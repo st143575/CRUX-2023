@@ -3,11 +3,10 @@ Translate non-English segments in the LTF files to English ones.
 """
 
 import torch, argparse
-import pandas as pd
 import dill as pickle
 from tqdm import tqdm
 from pathlib import Path
-from collections import Counter, defaultdict
+from collections import Counter
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 

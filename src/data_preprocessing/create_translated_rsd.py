@@ -2,10 +2,8 @@
 Create translated RSD by merging the segments in childuid2translatedsegments.p which belong to the same child_uid.
 """
 
-import os, json, argparse
+import json, argparse
 import dill as pickle
-from tqdm import tqdm
-from copy import deepcopy
 from pathlib import Path
 
 

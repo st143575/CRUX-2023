@@ -2,7 +2,6 @@ import json, argparse
 import pandas as pd
 import dill as pickle
 from tqdm import tqdm
-from collections import Counter
 from pathlib import Path
 
 
