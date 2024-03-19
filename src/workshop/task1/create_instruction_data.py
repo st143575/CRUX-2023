@@ -2,6 +2,7 @@ import json, argparse
 import pandas as pd
 import dill as pickle
 from tqdm import tqdm
+from collections import Counter
 from pathlib import Path
 
 
@@ -9,9 +10,9 @@ def parse_arguments():
     """Parse command line arguments."""
     
     parser = argparse.ArgumentParser(description='Create CoT instruction data.')
-    parser.add_argument('-dp', '--data_path', type=str, default='../../../datasets', help="Path to raw datasets")
-    parser.add_argument('-trp', '--trans_rsd_path', type=str, default='../../data_preprocessing/translate/output', help="Path to the translated rsd files.")
-    parser.add_argument('-o', '--output_dir', type=str, default='./data', help="Path to save the translated texts")
+    parser.add_argument('-dp', '--data_path', type=str, default='../../datasets', help="Path to raw datasets")
+    parser.add_argument('-trp', '--trans_rsd_path', type=str, default='./translate/output', help="Path to the translated rsd files.")
+    parser.add_argument('-o', '--output_dir', type=str, default='./instruction_data', help="Path to save the instruction data")
     return parser.parse_args()
 
 
