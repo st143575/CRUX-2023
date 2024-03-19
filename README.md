@@ -29,5 +29,5 @@ Preprocess the raw datasets through the following steps:
 4. Create CoT instruction data by running:
   ```bash
   cd ./src/data_preprocessing/
-  python create_instruction_data.py -dp ../../datasets -trp ./translate/output -o ./output
+  python create_instruction_data.py -dp ../../datasets -trp ./translate/output -o ./data
   ```
