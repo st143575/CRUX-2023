@@ -143,7 +143,7 @@ def main():
     print("Vocab size:", len(vocab))
     
     # Load instruction prompts.
-    dialogues_df = pd.read_json(f"{input_dir}/instruction_data.json")
+    dialogues_df = pd.read_json(f"{input_dir}/instruction_data_ft.json")
     
     dialogue_list = []
     for conversation in dialogues_df['conversations']:

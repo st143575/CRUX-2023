@@ -17,17 +17,15 @@ print(f"Using device: {device} ({device_name})")
 
 def parse_arguments():
     """Parse command line arguments."""
-    
     parser = argparse.ArgumentParser(description='Build mappings between datasets.')
     parser.add_argument('-i', '--input_dir', type=str, default='../BuildMappings/outputs', help="Path to the mappings created")
     parser.add_argument('-o', '--output_dir', type=str, default='./output', help="Path to save the translated texts")
-    parser.add_argument('-m', '--model', type=str, default='nllb', help="The translator model (default: nllb)")
+    parser.add_argument('-m', '--model', type=str, default='facebook/nllb-200-3.3B', help="The translator model (default: facebook/nllb-200-3.3B)")
     return parser.parse_args()
 
 
 def check_doclang(input_dir):
     """Get language statistics of the documents."""
-    
     childuid2doclang = pickle.load(open(f'{input_dir}/childuid2doclang.p', 'rb'))
     doclang_counter = Counter(childuid2doclang.values())
     print("Count document language:\n", doclang_counter, "\n")
@@ -54,7 +52,6 @@ def translate(childuid2segments, childuid2doclang, tokenizers, model, device):
     Doc: https://huggingface.co/docs/transformers/main/en/model_doc/nllb#overview-of-nllb
     List of languages and Flores-200 code: https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
     """
-    
     childuid2translatedsegments = dict()
     for child_uid, segments in tqdm(childuid2segments.items()):
         segmentid2translatedsegment = dict()
@@ -107,41 +104,52 @@ def main():
     input_dir = Path(args.input_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    translator_model = args.model
+    translator_model_name = args.model
     print("Input directory:", input_dir)
     print("Output directory:", output_dir)
     print("Translator model:", translator_model)
     
-    if translator_model == "nllb":
-        ptr_model_name = "facebook/nllb-200-3.3B"
-    
     # Get language statistics of the documents.
-    check_doclang(input_dir)
+    childuid2doclang = check_doclang(input_dir)
     
-    # Load the mapping from child_uid to segments in original languages (childuid2segments.p).
-    childuid2segments = pickle.load(open(f'{input_dir}/childuid2segments.p', 'rb'))
+    # Load the mapping from child_uid to segments in original languages (childuid2segments_trainval.p).
+    # (train_val)
+    childuid2segments_trainval = pickle.load(open(f'{input_dir}/childuid2segments_trainval.p', 'rb'))
+
+    # Load the mapping from child_uid to segments in original languages (childuid2segments_trainval.p).
+    # (eval)
+    childuid2segments_eval = pickle.load(open(f'{input_dir}/childuid2segments_eval.p', 'rb'))
     
     # Load model.
-    model = AutoModelForSeq2SeqLM.from_pretrained(ptr_model_name, use_auth_token=True, cache_dir='./cache/').to(device)
+    model = AutoModelForSeq2SeqLM.from_pretrained(translator_model_name, use_auth_token=True, cache_dir='./cache/').to(device)
     
     # Load tokenizer for segments whose source language is Russian.
-    tokenizer_rus = AutoTokenizer.from_pretrained(ptr_model_name, use_auth_token=True, src_lang="rus_Cyrl", cache_dir='./cache/')
+    tokenizer_rus = AutoTokenizer.from_pretrained(translator_model_name, use_auth_token=True, src_lang="rus_Cyrl", cache_dir='./cache/')
     
     # Load tokenizer for segments whose source language is Spanish.
-    tokenizer_spa = AutoTokenizer.from_pretrained(ptr_model_name, use_auth_token=True, src_lang="spa_Latn", cache_dir='./cache/')
+    tokenizer_spa = AutoTokenizer.from_pretrained(translator_model_name, use_auth_token=True, src_lang="spa_Latn", cache_dir='./cache/')
     
     tokenizers = {
         'tokenizer_rus': tokenizer_rus,
         'tokenizer_spa': tokenizer_spa
     }
     
-    childuid2translatedsegments = translate(childuid2segments, tokenizers, model, device)
+    # Translate train_val.
+    childuid2translatedsegments_trainval = translate(childuid2segments_trainval, tokenizers, model, device)
     
-    print("Writing translated segments...")
-    with open(f'{output_dir}/childuid2translatedsegments.p', 'wb') as file:
-        pickle.dump(childuid2translatedsegments, file)
+    print("Writing translated segments (train_val) ...")
+    with open(f'{output_dir}/childuid2translatedsegments_trainval.p', 'wb') as file:
+        pickle.dump(childuid2translatedsegments_trainval, file)
     print("Done!")
     
+    # Translate eval.
+    childuid2translatedsegments_eval = translate(childuid2segments_eval, tokenizers, model, device)
+
+    print("Writing translated segments (eval) ...")
+    with open(f'{output_dir}/childuid2translatedsegments_eval.p', 'wb') as file:
+        pickle.dump(childuid2translatedsegments_eval, file)
+    print("Done!")
+
 
 if __name__ == "__main__":
     main()

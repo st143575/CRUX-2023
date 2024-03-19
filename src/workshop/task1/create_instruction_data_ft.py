@@ -765,7 +765,7 @@ def main():
                 }
             )
 
-            with open(f"{output_dir}/instruction_data.json", 'w') as file:
+            with open(f"{output_dir}/instruction_data_ft.json", 'w') as file:
                 json.dump(cfe, file)
 
 
