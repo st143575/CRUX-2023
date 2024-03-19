@@ -25,3 +25,9 @@ Preprocess the raw datasets through the following steps:
   cd ./src/data_preprocessing/
   python create_translated_rsd.py -i ./translate/output -o ./output
   ```
+
+4. Create CoT instruction data by running:
+  ```bash
+  cd ./src/data_preprocessing/
+  python create_instruction_data.py -dp ../../datasets -trp ./translate/output -o ./output
+  ```
