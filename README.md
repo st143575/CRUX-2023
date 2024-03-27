@@ -33,13 +33,13 @@ Preprocess the raw datasets through the following steps:
 2. Translate non-English segments to English by running:
   ```bash
   cd ./src/data_preprocessing/translate/
-  python translate.py -i ../build_mappings/outputs -o ./output -m nllb
+  python translate.py -i ../build_mappings/output -o ./output -m nllb
   ```
 
 3. Create translated documents (rsd files) by running:
   ```bash
-  cd ./src/data_preprocessing/
-  python create_translated_rsd.py -i ./translate/output -o ./output
+  cd ./src/data_preprocessing/translate/
+  python create_translated_rsd.py -i ./output -o ./output
   ```
 
 4. Create CoT instruction data by running:
