@@ -88,10 +88,10 @@ def childuidsegid2segment(inp_dir):
     """
     childuidsegid2segment = defaultdict()
     for curr_path, directs, files in os.walk(inp_dir):
-        if curr_path.endswith('.json'):
+        if curr_path.startswith('output/ltf_json_'):
             for file in tqdm(files):
                 child_uid = file[:9]
-                with open(f'{inp_dir}/ltf.json/' + file, 'r') as json_file:
+                with open(f'{inp_dir}/' + file, 'r') as json_file:
                     json_data = json.load(json_file)
                     assert child_uid == json_data['LCTL_TEXT']['DOC']['@id']
                     text = json_data['LCTL_TEXT']['DOC']['TEXT']
@@ -121,7 +121,7 @@ def childuid2segments(inp_dir, split):
     """
     childuid2segments = defaultdict()
     for curr_path, directs, files in os.walk(f'{inp_dir}/ltf_json_{split}'):
-        if curr_path.endswith('.json'):
+        if curr_path.startswith('output/ltf_json_'):
             for file in tqdm(files):
                 child_uid = file[:9]
                 with open(f'{inp_dir}/ltf_json_{split}/' + file, 'r') as json_file:
