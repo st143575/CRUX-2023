@@ -39,7 +39,10 @@ Preprocess the raw datasets through the following steps:
 3. Create translated documents (rsd files) by running:
   ```bash
   cd ./src/data_preprocessing/translate/
-  python create_translated_rsd.py -i ./output -o ./output
+  # for trainval data
+  python create_translated_rsd.py -i ./output/childuid2translatedsegments_trainval.p -o ./output
+  # for eval data
+  python create_translated_rsd.py -i ./output/childuid2translatedsegments_eval.p -o ./output
   ```
 
 4. Create CoT instruction data by running:
