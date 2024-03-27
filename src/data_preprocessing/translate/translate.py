@@ -2,7 +2,7 @@
 Translate non-English segments in the LTF files to English ones.
 """
 
-import torch, argparse
+import os, torch, argparse
 import dill as pickle
 from tqdm import tqdm
 from pathlib import Path
@@ -18,15 +18,15 @@ print(f"Using device: {device} ({device_name})")
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description='Build mappings between datasets.')
-    parser.add_argument('-i', '--input_dir', type=str, default='../BuildMappings/outputs', help="Path to the mappings created")
+    parser.add_argument('-i', '--input_dir', type=str, default='../build_mappings/output', help="Path to the mappings created")
     parser.add_argument('-o', '--output_dir', type=str, default='./output', help="Path to save the translated texts")
     parser.add_argument('-m', '--model', type=str, default='facebook/nllb-200-3.3B', help="The translator model (default: facebook/nllb-200-3.3B)")
     return parser.parse_args()
 
 
-def check_doclang(input_dir):
+def check_doclang(input_file):
     """Get language statistics of the documents."""
-    childuid2doclang = pickle.load(open(f'{input_dir}/childuid2doclang.p', 'rb'))
+    childuid2doclang = pickle.load(open(input_file, 'rb'))
     doclang_counter = Counter(childuid2doclang.values())
     print("Count document language:\n", doclang_counter, "\n")
     
@@ -54,6 +54,7 @@ def translate(childuid2segments, childuid2doclang, tokenizers, model, device):
     """
     childuid2translatedsegments = dict()
     for child_uid, segments in tqdm(childuid2segments.items()):
+        # print(child_uid, segments)
         segmentid2translatedsegment = dict()
         
         # If the document language is English, we don't need to translate it. Just copy the original segments to childuid2translatedsegments.
@@ -107,27 +108,32 @@ def main():
     translator_model_name = args.model
     print("Input directory:", input_dir)
     print("Output directory:", output_dir)
-    print("Translator model:", translator_model)
+    print("Translator model:", translator_model_name)
     
     # Get language statistics of the documents.
-    childuid2doclang = check_doclang(input_dir)
+    print("Document language of train_val set:")
+    childuid2doclang_trainval = check_doclang(f'{input_dir}/childuid2doclang_trainval.p')
+    print("Document language of eval set:")
+    childuid2doclang_eval = check_doclang(f'{input_dir}/childuid2doclang_eval.p')
     
     # Load the mapping from child_uid to segments in original languages (childuid2segments_trainval.p).
     # (train_val)
     childuid2segments_trainval = pickle.load(open(f'{input_dir}/childuid2segments_trainval.p', 'rb'))
+    print(len(childuid2segments_trainval))
 
     # Load the mapping from child_uid to segments in original languages (childuid2segments_trainval.p).
     # (eval)
     childuid2segments_eval = pickle.load(open(f'{input_dir}/childuid2segments_eval.p', 'rb'))
+    print(len(childuid2segments_eval))
     
     # Load model.
-    model = AutoModelForSeq2SeqLM.from_pretrained(translator_model_name, use_auth_token=True, cache_dir='./cache/').to(device)
+    model = AutoModelForSeq2SeqLM.from_pretrained(translator_model_name, token=True, cache_dir='./cache/').to(device)
     
     # Load tokenizer for segments whose source language is Russian.
-    tokenizer_rus = AutoTokenizer.from_pretrained(translator_model_name, use_auth_token=True, src_lang="rus_Cyrl", cache_dir='./cache/')
+    tokenizer_rus = AutoTokenizer.from_pretrained(translator_model_name, token=True, src_lang="rus_Cyrl", cache_dir='./cache/')
     
     # Load tokenizer for segments whose source language is Spanish.
-    tokenizer_spa = AutoTokenizer.from_pretrained(translator_model_name, use_auth_token=True, src_lang="spa_Latn", cache_dir='./cache/')
+    tokenizer_spa = AutoTokenizer.from_pretrained(translator_model_name, token=True, src_lang="spa_Latn", cache_dir='./cache/')
     
     tokenizers = {
         'tokenizer_rus': tokenizer_rus,
@@ -135,7 +141,13 @@ def main():
     }
     
     # Translate train_val.
-    childuid2translatedsegments_trainval = translate(childuid2segments_trainval, tokenizers, model, device)
+    childuid2translatedsegments_trainval = translate(
+        childuid2segments_trainval, 
+        childuid2doclang_trainval, 
+        tokenizers, 
+        model, 
+        device
+        )
     
     print("Writing translated segments (train_val) ...")
     with open(f'{output_dir}/childuid2translatedsegments_trainval.p', 'wb') as file:
@@ -143,7 +155,13 @@ def main():
     print("Done!")
     
     # Translate eval.
-    childuid2translatedsegments_eval = translate(childuid2segments_eval, tokenizers, model, device)
+    childuid2translatedsegments_eval = translate(
+        childuid2segments_eval, 
+        childuid2doclang_eval, 
+        tokenizers, 
+        model, 
+        device
+        )
 
     print("Writing translated segments (eval) ...")
     with open(f'{output_dir}/childuid2translatedsegments_eval.p', 'wb') as file:

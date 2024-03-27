@@ -33,7 +33,7 @@ Preprocess the raw datasets through the following steps:
 2. Translate non-English segments to English by running:
   ```bash
   cd ./src/data_preprocessing/translate/
-  python translate.py -i ../BuildMappings/outputs -o ./output -m nllb
+  python translate.py -i ../build_mappings/outputs -o ./output -m nllb
   ```
 
 3. Create translated documents (rsd files) by running:
