@@ -2,7 +2,6 @@ import json, argparse
 import pandas as pd
 import dill as pickle
 from tqdm import tqdm
-from collections import Counter
 from pathlib import Path
 
 
@@ -17,12 +16,12 @@ def parse_arguments():
 
 
 def get_events(parent_uid, 
-               child_uid, 
+            #    child_uid, 
                claim_frames_df, 
                evt_kes_df, 
                evt_slots_df, 
                rel_kes_df, 
-               rel_slots_df, 
+            #    rel_slots_df, 
                arg_kes_df, 
                dwd_overlay
               ):
@@ -233,10 +232,10 @@ def get_events(parent_uid,
                     
 
 def get_relations(parent_uid, 
-                  child_uid, 
+                #   child_uid, 
                   claim_frames_df, 
                   evt_kes_df, 
-                  evt_slots_df, 
+                #   evt_slots_df, 
                   rel_kes_df, 
                   rel_slots_df, 
                   arg_kes_df, 
@@ -452,14 +451,14 @@ def get_relations(parent_uid,
 
 
 def get_claims(parent_uid, 
-               child_uid, 
+            #    child_uid, 
                claim_frames_df, 
-               evt_kes_df, 
-               evt_slots_df, 
-               rel_kes_df, 
-               rel_slots_df, 
-               arg_kes_df, 
-               dwd_overlay
+            #    evt_kes_df, 
+            #    evt_slots_df, 
+            #    rel_kes_df, 
+            #    rel_slots_df, 
+            #    arg_kes_df, 
+            #    dwd_overlay
                ):
     """
     Retrieve claims for a document from the annotation data.
@@ -617,7 +616,7 @@ def main():
     print("Output directory:", output_dir)
     
     # Load childuid2translatedrsd.p
-    childuid2translatedrsd = pickle.load(open(f'{translated_rsd_path}/childuid2translatedrsd.p', 'rb'))
+    childuid2translatedrsd = pickle.load(open(f'{translated_rsd_path}/childuid2translatedrsd_trainval.p', 'rb'))
     
     # Load parent_child.tab
     SOURCE_DATA_PATH = f"{dataset_path}/LDC/LDC2021E11_AIDA_Phase_3_Practice_Topic_Source_Data_V2.0"
@@ -705,7 +704,17 @@ def main():
             conversations.append(turn_ee_human)
 
             # Extract events.
-            events = get_events(parent_uid, child_uid_rsd, claim_frames_df, evt_kes_df, evt_slots_df, rel_kes_df, rel_slots_df, arg_kes_df, dwd_overlay)
+            events = get_events(
+                parent_uid, 
+                # child_uid_rsd, 
+                claim_frames_df, 
+                evt_kes_df, 
+                evt_slots_df, 
+                rel_kes_df, 
+                # rel_slots_df, 
+                arg_kes_df, 
+                dwd_overlay
+                )
         #     print('EVENTS:\n', events, '\n\n')
             prompt_ee_robot = f"<Assistant> Following events are happening or happend in this document:\n{events}\n\n</s>"
             turn_ee_robot = {
@@ -723,7 +732,17 @@ def main():
             conversations.append(turn_re_human)
 
             # Extract relations.
-            relations = get_relations(parent_uid, child_uid_rsd, claim_frames_df, evt_kes_df, evt_slots_df, rel_kes_df, rel_slots_df, arg_kes_df, dwd_overlay)
+            relations = get_relations(
+                parent_uid, 
+                # child_uid_rsd, 
+                claim_frames_df, 
+                evt_kes_df, 
+                # evt_slots_df, 
+                rel_kes_df, 
+                rel_slots_df, 
+                arg_kes_df, 
+                dwd_overlay
+                )
             prompt_re_robot = f"<Assistant> This document contains following relations:\n{relations}\n\n</s>"
             turn_re_robot = {
                 "speaker": "Assistant",
@@ -741,14 +760,14 @@ def main():
 
             # Extract claims.
             claims = get_claims(parent_uid, 
-                                child_uid_rsd, 
+                                # child_uid_rsd, 
                                 claim_frames_df, 
-                                evt_kes_df, 
-                                evt_slots_df, 
-                                rel_kes_df, 
-                                rel_slots_df, 
-                                arg_kes_df, 
-                                dwd_overlay
+                                # evt_kes_df, 
+                                # evt_slots_df, 
+                                # rel_kes_df, 
+                                # rel_slots_df, 
+                                # arg_kes_df, 
+                                # dwd_overlay
                                 )
             prompt_ce_robot = f"<Assistant> These events and relations comprise the following claims with their correpsonding components:\n{claims}\n\n</s>"
             turn_ce_robot = {
