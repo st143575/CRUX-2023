@@ -66,3 +66,24 @@ Preprocess the raw datasets through the following steps:
   cd ./src/workshop/task1/
   python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
   ```
+
+6. Fine-tune the model for Task 1:
+   ```bash
+   python finetune.py \
+       -i ./encoded_data \                      # Path to the encoded data for finetuning
+       -dfn train_val_1 \                       # Name of the dataset file
+       -o ./ckpts \                             # Path to model checkpoints
+       -m meta-llama/Llama-2-7b-chat-hf \       # Name of the model and tokenizer
+       -e 1 \                                   # Number of epochs
+       -bs 2 \                                  # Batch size
+       --optimizer paged_adamw_8bit \           # Optimizer
+       --warm_up_steps 10 \                     # Warm up steps
+       --weight_decay 0.1 \                     # Weight decay
+       --logging_steps 64 \                     # Number of steps for which the trainer generates logs
+       --save_steps 512 \                       # Number of steps for which the trainer saves a model checkpoint
+       --save_total_limit 2 \                   # Maximal number of model checkpoints saved
+       -r 8 \                                   # LoRA rank parameter (LoRA attention dimension)
+       -a 32 \                                  # The alpha parameter for Lora scaling
+       -d 0.05 \                                # The dropout probability for Lora layers
+       -b 'none'                                # Bias type for LoRA (default: not update biases during fine-tuning)
+   ```
