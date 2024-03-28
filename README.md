@@ -88,5 +88,5 @@ Preprocess the raw datasets through the following steps:
        -r 8 \                                   # LoRA rank parameter (LoRA attention dimension)
        -a 32 \                                  # The alpha parameter for Lora scaling
        -d 0.05 \                                # The dropout probability for Lora layers
-       -b 'none'                                # Bias type for LoRA (default: not update biases during fine-tuning)
+       -b 'none'                                # Bias type for LoRA (default: do not update biases during fine-tuning)
    ```
