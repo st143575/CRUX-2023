@@ -8,7 +8,8 @@ from transformers import (
     LlamaForCausalLM,
     TrainingArguments,
     Trainer,
-    DefaultDataCollator
+    DefaultDataCollator,
+    BitsAndBytesConfig
 )
 from peft import (
     prepare_model_for_kbit_training, 
@@ -20,7 +21,8 @@ from peft import (
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description='Create translated rsd files.')
-    parser.add_argument('-i', '--input_dir', type=str, default='./encoded_data/train_val_1', help="Path to the encoded data for finetuning")
+    parser.add_argument('-i', '--input_dir', type=str, default='./encoded_data', help="Path to the encoded data for finetuning")
+    parser.add_argument('-dfn', '--data_file_name', type=str, default='train_val_1', help="Name of the data file")
     parser.add_argument('-o', '--output_dir', type=str, default='./ckpts', help="Path to model checkpoints")
     parser.add_argument('-m', '--model', type=str, default='meta-llama/Llama-2-7b-chat-hf', help="Name of the model and tokenizer")
     # Arguments for training hyperparameters.
@@ -120,14 +122,22 @@ def main():
     print("Output directory:", output_dir)
     
     # Load dataset.
-    dataset = load_from_disk(f'{input_dir}')
+    dataset = load_from_disk(f'{input_dir}/{args.data_file_name}')
     
     # Load the default data collator.
     default_data_collator = DefaultDataCollator(return_tensors='pt')
+
+    quant_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
     
     # Load tokenizer and model.
     tokenizer = LlamaTokenizer.from_pretrained(args.model, cache_dir='../../../cache/', add_eos_token=True)
-    model = LlamaForCausalLM.from_pretrained(args.model, cache_dir='../../../cache/').to(device)
+    model = LlamaForCausalLM.from_pretrained(args.model, cache_dir='../../../cache/', quantization_config=quant_config)
+    print("Number of parameters:", model.num_parameters())
     
     special_tokens = {
         'additional_special_tokens': ['<User>', '<Assistant>', '<MASK>', '<<SYS>>', '<</SYS>>', '[INST]', '[/INST]']
@@ -135,6 +145,7 @@ def main():
     tokenizer.add_special_tokens(special_tokens)
     vocab = tokenizer.get_vocab()
     model.resize_token_embeddings(len(vocab))
+    print("Vocabulary size:", len(vocab))
     
     # Quantize the model and set the configurations for QLoRA.
     model = prepare_model_for_kbit_training(model)
@@ -154,6 +165,12 @@ def main():
         task_type="CAUSAL_LM"
     )
     model = get_peft_model(model, config)
+    print("Number of parameters:", model.num_parameters())
+
+    # To deal with the warning `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`..
+    # This must be set to True during inference.
+    # Reference: https://discuss.huggingface.co/t/why-is-use-cache-incompatible-with-gradient-checkpointing/18811
+    model.config.use_cache = False
 
     finetune(
         dataset=dataset, 
