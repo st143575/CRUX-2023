@@ -24,8 +24,9 @@ def parse_arguments():
     """Parse command line arguments."""
     
     parser = argparse.ArgumentParser(description='Create translated rsd files.')
-    parser.add_argument('-i', '--input_dir', type=str, default='./data', help="Path to the instruction prompts")
+    parser.add_argument('-i', '--input_dir', type=str, default='./instruction_data', help="Path to the instruction prompts")
     parser.add_argument('-o', '--output_dir', type=str, default='./encoded_data', help="Path to the encoded data")
+    parser.add_argument('-ofn', '--output_file_name', type=str, default='train_val_1', help="Specify the name of the output file")
     parser.add_argument('-m', '--model', type=str, default='meta-llama/Llama-2-7b-chat-hf', help="Specify the name of model and tokenizer")
     return parser.parse_args()
 
@@ -43,7 +44,7 @@ def mask_except_assist_answer(turn, assistant_id, mask_id):
     """
     last_index = -1
     # Get the last index of the Assistant's answer in the turn by iterating over turn in reversed order until the assistant_id.
-    for i, in range(len(turn)-1, -1, -1):
+    for i in range(len(turn)-1, -1, -1):
         if turn[i] == assistant_id:
             last_index = 1
             break
@@ -67,6 +68,7 @@ def apply_sliding_window(input_ids, token_type_ids, labels, max_len):
         token_type_ids_new:list[int]
         labels_new:list[int]
     """
+    print(len(input_ids), len(token_type_ids), len(labels))
     assert len(input_ids) == len(token_type_ids)
     assert len(token_type_ids) == len(labels)
     
@@ -254,11 +256,12 @@ def main():
             elif token_id == assistant_id:
                 type_id = assistant_id
                 turn_token_type_ids.append(type_id)
+        token_type_ids.append(turn_token_type_ids)
     
     # Create labels for each turn in each dialogue by masking out all the tokens except for the answer of the assistant.
     labels = []
     for turn in tqdm(input_ids):
-        turn_labels = mask_except_assist_answer(turn, assistant_id)
+        turn_labels = mask_except_assist_answer(turn, assistant_id, mask_id)
         labels.append(turn_labels)
         
     # Slice the data using a sliding window.
@@ -337,7 +340,7 @@ def main():
         'validation': train_val['test']
     })
     
-    train_val.save_to_disk(f"{output_dir}/train_val_1")
+    train_val.save_to_disk(f"{output_dir}/{args.output_file_name}")
 
 
 if __name__ == "__main__":

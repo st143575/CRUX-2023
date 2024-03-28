@@ -60,3 +60,9 @@ Preprocess the raw datasets through the following steps:
   # for eval data
   python create_instruction_data_eval.py -dp ../../../datasets -trp ../../data_preprocessing/translate/output -o ./instruction_data
   ```
+
+5. Encode the instruction data for fine-tuning:
+  ```bash
+  cd ./src/workshop/task1/
+  python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
+  ```
