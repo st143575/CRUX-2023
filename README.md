@@ -19,10 +19,10 @@ $\quad$| $\quad$|--*LDC2021E11_AIDA_Phase_3_Practice_Topic_Source_Data_V2.0*
 $\quad$| $\quad$|--*LDC2021E16_AIDA_Phase_3_TA3_Practice_Topic_Annotation_V5.1*  
 $\quad$| $\quad$|--*LDC2023E10_SMKBP_2023_Claim_Frame_Evaluation_Source_Data*  
 $\quad$|--*DWD_Overlay*  
-$\quad$|--*CRUX2023_Evaluation_Topics.tab.txt*  
 $\quad$|--*CRUX2023_Task1_Evaluation_KBs*  
 $\quad$|--*CRUX2023_Task1_Evaluation_root_uids.txt*  
-$\quad$|--*CRUX2023_Task2_Evaluation_claim_frames.tab*
+$\quad$|--*CRUX2023_Task2_Evaluation_claim_frames.tab*  
+$\quad$|--*CRUX2023_Evaluation_Topics.tab.txt*
 
 ## Data Preprocessing
 Preprocess the raw datasets through the following steps:
