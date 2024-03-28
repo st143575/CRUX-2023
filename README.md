@@ -67,8 +67,11 @@ Preprocess the raw datasets through the following steps:
   python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
   ```
 
-6. Fine-tune the model for Task 1:
+## Task 1:
+### Fine-tune
    ```bash
+   cd ./src/workshop/task1/
+   
    python finetune.py \
        -i ./encoded_data \                      # Path to the encoded data for finetuning
        -dfn train_val_1 \                       # Name of the dataset file
