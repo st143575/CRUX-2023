@@ -55,7 +55,7 @@ Preprocess the raw datasets through the following steps:
   cd ./src/workshop/task1/
 
   # for trainval data (fine-tuning)
-  python create_instruction_data_ft.py -dp ../../datasets -trp ./translate/output -o ./instruction_data
+  python create_instruction_data_ft.py -dp ../../../datasets -trp ../../data_preprocessing/translate/output -o ./instruction_data
 
   # for eval data
   python create_instruction_data_eval.py -dp ../../../datasets -trp ../../data_preprocessing/translate/output -o ./instruction_data
