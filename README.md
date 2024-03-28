@@ -67,7 +67,7 @@ Preprocess the raw datasets through the following steps:
   python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
   ```
 
-## Task 1:
+## Task 1
 ### Fine-tune
    ```bash
    cd ./src/workshop/task1/
@@ -78,7 +78,7 @@ Preprocess the raw datasets through the following steps:
        -o ./ckpts \                             # Path to model checkpoints
        -m meta-llama/Llama-2-7b-chat-hf \       # Name of the model and tokenizer
        -e 1 \                                   # Number of epochs
-       -bs 2 \                                  # Batch size
+       -bs 2 \                                  # Batch size (default: 2, largest possible batch size for a single RTX A6000: 8)
        --optimizer paged_adamw_8bit \           # Optimizer
        --warm_up_steps 10 \                     # Warm up steps
        --weight_decay 0.1 \                     # Weight decay
