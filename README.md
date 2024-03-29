@@ -30,13 +30,13 @@ Preprocess the raw datasets through the following steps:
 1. Build mappings from the raw datasets by running:
   ```bash
   cd ./src/data_preprocessing/build_mappings/
-  python build_mappings.py -i ../dataset -o ./output
+  python build_mappings.py -i ../datasets -o ./output
   ```
 
 2. Translate non-English segments to English by running:
   ```bash
   cd ./src/data_preprocessing/translate/
-  python translate.py -i ../build_mappings/output -o ./output -m nllb
+  python translate.py -i ../build_mappings/output -o ./output -m facebook/nllb-200-3.3B
   ```
 
 3. Create translated documents (rsd files) by running:
@@ -65,6 +65,11 @@ Preprocess the raw datasets through the following steps:
   ```bash
   cd ./src/workshop/task1/
   python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
+  ```
+
+Or execute the entire data preprocessing pipeline in one step:
+  ```bash
+  bash ./src/data_preprocessing/run.sh
   ```
 
 ## Task 1
