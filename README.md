@@ -67,7 +67,7 @@ Preprocess the raw datasets through the following steps:
   python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
   ```
 
-Or execute the entire data preprocessing pipeline in one step:
+Alternatively, run the entire data preprocessing pipeline in one step:
   ```bash
   bash ./src/data_preprocessing/run.sh
   ```
