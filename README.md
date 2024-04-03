@@ -15,9 +15,9 @@ pip install -r requirements.txt
 Download all the datasets to ```./datasets``` such that the directory has the following structure:  
 *datasets*  
 $\quad$|--*LDC*  
-$\quad$| $\quad$|--*LDC2021E11_AIDA_Phase_3_Practice_Topic_Source_Data_V2.0*  
-$\quad$| $\quad$|--*LDC2021E16_AIDA_Phase_3_TA3_Practice_Topic_Annotation_V5.1*  
-$\quad$| $\quad$|--*LDC2023E10_SMKBP_2023_Claim_Frame_Evaluation_Source_Data*  
+$\quad$| $\quad$|--*LDC2021E11*  
+$\quad$| $\quad$|--*LDC2021E16*  
+$\quad$| $\quad$|--*LDC2023E10*  
 $\quad$|--*DWD_Overlay*  
 $\quad$|--*CRUX2023_Task1_Evaluation_KBs*  
 $\quad$|--*CRUX2023_Task1_Evaluation_root_uids.txt*  
@@ -73,7 +73,7 @@ Alternatively, run the entire data preprocessing pipeline in one step:
   ```
 
 ## Task 1
-### Fine-tune
+### Fine-tuning
    ```bash
    cd ./src/workshop/task1/
    
