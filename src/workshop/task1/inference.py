@@ -77,9 +77,7 @@ def load_model_and_tokenizer(model_name, base_model_dir, adapter_dir, device):
     # Load and add the fine-tuned adapter layers to the base model.
     model = PeftModelForCausalLM.from_pretrained(model=model, model_id=adapter_dir, device=device)
     print(model.num_parameters())
-
-    model.eval()
-
+    
     return model, tokenizer
 
 
@@ -231,6 +229,7 @@ def main():
         adapter_dir=model_path,
         device=device
     )
+    model.eval()
 
     # Load the evaluation dataset.
     instruction_data_eval = pd.read_json(f"{input_dir}/{args.file_name}")
