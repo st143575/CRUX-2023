@@ -99,7 +99,7 @@ Alternatively, run the entire data preprocessing pipeline in one step:
 The fine-tuning took about 6 days on a single RTX A6000.
 
 ### Inference
-```bash
+   ```bash
    cd ./src/workshop/task1/
    
    python inference.py \
