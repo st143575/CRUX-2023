@@ -120,7 +120,7 @@ The fine-tuning took about 6 days on a single RTX A6000.
      --early_stopping False                           # Whether to stop generation when all beam hypotheses have reached the EOS token (default: False)
  ```
 
-2. Post-process the generated output files to extract structured claim frames in tab-separated format.
+2. Post-process the generated output files to extract structured claim frames in tab-separated format:
  ```bash
  python postprocess.py -i ./eval_output -o ./claim_frames -d ../../../datasets
  ```
