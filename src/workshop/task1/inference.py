@@ -26,7 +26,7 @@ def parse_arguments():
     parser.add_argument('--max_new_tokens', type=int, default=4096, help="Maximum number of tokens to generate (default: 4096)")
     parser.add_argument('--do_sample', type=bool, default=False, help="Whether to sample from the output distribution (default: False, i.e., greedy decoding)")
     parser.add_argument('--temperature', type=float, default=1.0, help="Temperture value used to modulate the next token probabilities (default: 1.0)")
-    parser.add_argument('--top_k', type=int, default=50, help="The number of highest probability vocabulary tokens to keep for top-k sampling (default: 50)")
+    parser.add_argument('--top_k', type=int, default=50, help="Number of highest probability vocabulary tokens to keep for top-k sampling (default: 50)")
     parser.add_argument('--top_p', type=float, default=1.0, help="If set to float < 1, only the most probable tokens with probabilities that add up to top_p or higher are kept for sampling (default: 1.0)")
     parser.add_argument('--num_beams', type=int, default=1, help="Number of beams for beam search (default: 1, i.e., greedy decoding, no beam search)")
     parser.add_argument('--early_stopping', type=bool, default=False, help="Whether to stop generation when all beam hypotheses have reached the EOS token")
