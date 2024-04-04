@@ -96,6 +96,6 @@ Alternatively, run the entire data preprocessing pipeline in one step:
        -b 'none'                                # Bias type for LoRA (default: do not update biases during fine-tuning)
    ```
 
-The fine-tuning took about 6 days.
+The fine-tuning took about 6 days on a single RTX A6000.
 
 ### Inference
