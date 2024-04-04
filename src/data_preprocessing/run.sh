@@ -24,5 +24,5 @@ python create_instruction_data_eval.py -dp ../../../datasets -trp ../../data_pre
 # 5. Encode the instruction data for fine-tuning.
 python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
 
-# Back to the root dir.
+# Back to the root dir of this repo.
 cd ../../../
