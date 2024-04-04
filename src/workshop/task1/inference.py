@@ -20,7 +20,7 @@ def parse_arguments():
     parser.add_argument('-o', '--output_dir', type=str, default='./eval_output', help="Path to the output directory")
     parser.add_argument('-mp', '--model_path', type=str, default='./final_ckpt/model_2024-04-04-075742', help="Path to the fine-tuned model checkpoint")
     parser.add_argument('-mn', '--model_name', type=str, default='meta-llama/Llama-2-7b-chat-hf', help="Name of the base model and tokenizer")
-    parser.add_argument('-c', '--cache_dir', type=str, default='/mount/studenten/projekt-cs/crux2023/cache', help="Path to the cache dir which saves the base model and tokenizer")
+    parser.add_argument('-c', '--cache_dir', type=str, default='../../../cache', help="Path to the cache dir which saves the base model and tokenizer")
     parser.add_argument('--seed', type=int, default=42, help="Random seed")
     # Arguments for generation hyperparameters.
     parser.add_argument('--max_new_tokens', type=int, default=4096, help="Maximum number of tokens to generate (default: 4096)")
