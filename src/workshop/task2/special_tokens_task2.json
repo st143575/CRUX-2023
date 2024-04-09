@@ -1,0 +1,9 @@
+{
+    "USER": "<User>",
+    "ASSISTANT": "<Assistant>",
+    "B_INST":  "[INST]",
+    "E_INST": "[/INST]",
+    "B_SYS": "<<SYS>>\n",
+    "E_SYS": "\n<</SYS>>\n\n",
+    "MASK": "<MASK>"
+}

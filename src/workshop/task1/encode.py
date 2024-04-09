@@ -25,6 +25,7 @@ def parse_arguments():
     
     parser = argparse.ArgumentParser(description='Create translated rsd files.')
     parser.add_argument('-i', '--input_dir', type=str, default='./instruction_data', help="Path to the instruction prompts")
+    parser.add_argument('-ifn', '--input_file_name', type=str, default='instruction_data_ft.json', help="Name of the input data file")
     parser.add_argument('-o', '--output_dir', type=str, default='./encoded_data', help="Path to the encoded data")
     parser.add_argument('-ofn', '--output_file_name', type=str, default='train_val_1', help="Specify the name of the output file")
     parser.add_argument('-m', '--model', type=str, default='meta-llama/Llama-2-7b-chat-hf', help="Specify the name of model and tokenizer")
@@ -133,7 +134,7 @@ def main():
         'additional_special_tokens': [
             '<User>',
             '<Assistant>',
-            '<mask>',
+            '<MASK>',
             '<<SYS>>',
             '<</SYS>>',
             '[INST]',
@@ -145,7 +146,7 @@ def main():
     print("Vocab size:", len(vocab))
     
     # Load instruction prompts.
-    dialogues_df = pd.read_json(f"{input_dir}/instruction_data_ft.json")
+    dialogues_df = pd.read_json(f"{input_dir}/{args.input_file_name}")
     
     dialogue_list = []
     for conversation in dialogues_df['conversations']:

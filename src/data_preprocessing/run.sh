@@ -1,4 +1,4 @@
-# run.sh
+### Datapreprocessing run.sh ###
 
 # 1. Build mappings from the raw datasets.
 cd ./build_mappings/
@@ -14,15 +14,23 @@ python create_translated_rsd.py -i ./output/childuid2translatedsegments_trainval
 # for eval data
 python create_translated_rsd.py -i ./output/childuid2translatedsegments_eval.p -o ./output
 
-# 4. Create CoT instruction data.
+# 4. Create and encode CoT instruction data. Only training data need to be encoded in advance.
+# Task 1
 cd ../../workshop/task1/
-# for trainval data (fine-tuning)
+# Create trainval data
 python create_instruction_data_ft.py -dp ../../../datasets -trp ../../data_preprocessing/translate/output -o ./instruction_data
-# for eval data
+python encode.py -i ./instruction_data -ifn instruction_data_ft.json -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
+# Create eval data
 python create_instruction_data_eval.py -dp ../../../datasets -trp ../../data_preprocessing/translate/output -o ./instruction_data
 
-# 5. Encode the instruction data for fine-tuning.
-python encode.py -i ./instruction_data -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
+# Task 2
+cd ../task2/
+# Create trainval data
+python create_instruction_data_ft.py -i ../../../datasets -o ./instruction_data
+python encode.py -i ./instruction_data -ifn instruction_data_ft.p -o ./encoded_data -ofn train_val_1 -m meta-llama/Llama-2-7b-chat-hf
+# Create eval data
+python create_instruction_data_eval.py -i ../../../datasets -o ./instruction_data
+
 
 # Back to the root dir of this repo.
 cd ../../../
