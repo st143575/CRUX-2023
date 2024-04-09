@@ -128,7 +128,7 @@ The fine-tuning took about 6 days on a single RTX A6000.
 
 2. Post-process the generated output files to extract structured claim frames in tab-separated format:
  ```bash
- python postprocess.py -i ./eval_output -o ./claim_frames -d ../../../datasets
+ python postprocess.py -i ./eval_output -o ./claim_frames
  ```
 
 Alternatively, run the entire inference pipeline in one line:
@@ -188,7 +188,7 @@ The fine-tuning took about 3.6 hours on a single RTX A6000.
 
 2. Post-process the generated output files to extract cross-claim relations in tab-separated format:
   ```bash
-  python postprocessing.py -i ./eval_output -o ../cross_claim_relations
+  python postprocessing.py -i ./eval_output -o ./cross_claim_relations
   ```
 
 Alternatively, run the entire inference pipeline in one line:
