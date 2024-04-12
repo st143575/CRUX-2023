@@ -80,7 +80,7 @@ Alternatively, run the entire data preprocessing pipeline in one line:
   ```
 
 ## Task 1
-### Fine-tuning
+<!-- ### Fine-tuning
    ```bash
    cd ./src/workshop/task1/
    
@@ -134,11 +134,11 @@ The fine-tuning took about 6 days on a single RTX A6000.
 Alternatively, run the entire inference pipeline in one line:
   ```bash
   bash ./src/workshop/task1/run.sh
-  ```
+  ``` -->
 
 
 ## Task 2
-### Fine-tuning
+<!-- ### Fine-tuning
   ```bash
      cd ./src/workshop/task2/
      
@@ -194,4 +194,4 @@ The fine-tuning took about 3.6 hours on a single RTX A6000.
 Alternatively, run the entire inference pipeline in one line:
   ```bash
   bash ./src/workshop/task2/run.sh
-  ```
+  ``` -->
