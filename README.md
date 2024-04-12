@@ -172,7 +172,7 @@ The fine-tuning took about 3.6 hours on a single RTX A6000.
       -i ./instruction_data \
       -f instruction_data_eval.p \
       -o ./eval_output \
-      -mp ./final_ckpt/model_2024-04-09-030150 \            # Path to the fine-tuned model checkpoint (Replace <file_name> with the file name of the fine-tuned model checkpoint. The file name has the format "model_YYYY-MM-DD-HHMMSS".)
+      -mp ./final_ckpt/<file_name> \            # Path to the fine-tuned model checkpoint (Replace <file_name> with the file name of the fine-tuned model checkpoint. The file name has the format "model_YYYY-MM-DD-HHMMSS".)
       -mn meta-llama/Llama-2-7b-chat-hf--do_sample \
       -c ../../../cache \
       --seed 42 \
