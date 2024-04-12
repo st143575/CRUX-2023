@@ -13,13 +13,13 @@ Install packages:
 pip install -r requirements.txt
 ```
 Download all the datasets to ```./datasets``` such that the directory has the following structure:  
-*datasets*  
-$\quad$|--*LDC*  
-$\quad$| $\quad$|--*LDC2021E11*  
-$\quad$| $\quad$|--*LDC2021E16*  
-$\quad$| $\quad$|--*LDC2023E10*  
-$\quad$|--*DWD_Overlay*  
-$\quad$|--*CRUX2023_Task1_Evaluation_KBs*  
+*datasets/*  
+$\quad$|--*LDC/*  
+$\quad$| $\quad$|--*LDC2021E11/*  
+$\quad$| $\quad$|--*LDC2021E16/*  
+$\quad$| $\quad$|--*LDC2023E10/*  
+$\quad$|--*DWD_Overlay/*  
+$\quad$|--*CRUX2023_Task1_Evaluation_KBs/*  
 $\quad$|--*CRUX2023_Task1_Evaluation_root_uids.txt*  
 $\quad$|--*CRUX2023_Task2_Evaluation_claim_frames.tab*  
 $\quad$|--*CRUX2023_Evaluation_Topics.tab.txt*
