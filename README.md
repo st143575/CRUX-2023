@@ -1,6 +1,6 @@
 # CRUX-2023
 
-skyline2023 at TAC 2023 CRUX.
+skyline2023 at [TAC 2023 CRUX](https://tac.nist.gov/2023/KBP/CRUX/index.html).
 
 ## Setup
 
