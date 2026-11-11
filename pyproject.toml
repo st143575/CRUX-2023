@@ -1,0 +1,21 @@
+[project]
+name = "crux"
+version = "0.1.0"
+description = "A re-development of our system for the NIST TAC 2023 CRUX Track with a new design using a 2026 technology stack"
+readme = "README.md"
+authors = [
+    { name = "Chong Shen", email = "shenchong123@yahoo.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "pandas>=3.1.1",
+    "requests>=2.34.2",
+]
+
+[project.scripts]
+crux = "crux:main"
+
+[build-system]
+requires = ["uv_build>=0.13.4,<0.14.0"]
+build-backend = "uv_build"

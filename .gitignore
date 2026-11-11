@@ -1,1 +1,14 @@
+# System files
 .DS_Store
+
+# Python & tools
+.venv/
+__pycache__/
+
+# Configs & keys
+.env
+
+# Directories
+data/*
+!data/.gitkeep
+tmp/
