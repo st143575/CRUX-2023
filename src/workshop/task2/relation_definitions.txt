@@ -1,4 +1,0 @@
-1. identical: Claim A and Claim B are identical if they have the same topic, same subtopic, same claim template, same X variable identities, same claimer identity and same epistemic truth value.
-2. refuted by: Claim A refutes Claim B (or Claim B is refuted by Claim A) if they have the same topic, and not identical, and if Claim A is true, then Claim B cannot be true.
-3. supported by: Claim A supports Claim B (or Claim B is supported by Claim A) if they have the same topic, and they are not identical and not refuting, and they can both be true at the same time, and if Claim A is true, then Claim B is more plausible.
-4. related: Claim A and Claim B are related if they have the same topic, and they are not identical, and Claim A does not refute Claim B, and Claim A does not support Claim B, and if Claim A is true, it doesn't affect the plausibility of Claim B.
