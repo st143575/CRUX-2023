@@ -1,5 +1,5 @@
 """
-Claim date/time: a date/time type plus a partially known timestamp.
+Claim datetime: a datetime type plus a partially known timestamp.
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ _PATTERN = re.compile(
 class ClaimDatetime(_Frozen):
     """
     When a claim was made. Components that the document does not give are None.
-    A fully unknown claim date/time is represented by None, not by this class.
+    A fully unknown claim datetime is represented by None, not by this class.
     """
     type: DatetimeType
     year: int | None = Field(default=None, ge=1, le=9999)
@@ -42,7 +42,7 @@ class ClaimDatetime(_Frozen):
     @model_validator(mode="after")
     def _check(self) -> ClaimDatetime:
         if all(getattr(self, p) is None for p in _PARTS):
-            raise ValueError("Claim date/time has no known component; use None for an unknown claim date/time")
+            raise ValueError("Claim datetime has unknown component; use None for an unknown claim datetime")
         if self.year and self.month and self.day:
             date(self.year, self.month, self.day)
         return self
@@ -54,7 +54,7 @@ class ClaimDatetime(_Frozen):
             return None
         m = _PATTERN.fullmatch(raw)
         if m is None:
-            raise ValueError(f"malformed claim date/time: {raw!r}")
+            raise ValueError(f"malformed claim datetime: {raw!r}")
         type_, *parts = m.groups()
         values = [None if p[0] in "Xx" else int(p) for p in parts]
         if all(v is None for v in values):

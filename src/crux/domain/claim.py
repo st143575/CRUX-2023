@@ -6,33 +6,28 @@ from __future__ import annotations
 
 
 from enum import StrEnum
-from pydantic import StringConstraints, Field, model_validator
-from typing import Annotated
-from ._base import _Frozen
+from pydantic import Field, model_validator
+from ._base import _Frozen, NonEmptyStr
 from .ids import MentionID, RootUID, ClaimID
 from .ldc_time import ClaimDatetime
-
-
-# A string that is not empty after surrounding whitespace is removed.
-NonEmptyStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class XVariable(_Frozen):
     """
     The item that fills the X in the claim template, as well as its identity Qnode and type Qnodes.
     """
-    name: NonEmptyStr                                              # Value is a string and cannot be empty.
-    qnode_identity: NonEmptyStr                                    # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
-    qnodes_type: tuple[NonEmptyStr, ...] = Field(min_length=1)     # Value can be one or more DWD Qnode IDs and cannot be empty.
+    name: NonEmptyStr                                                 # Value is a string and cannot be empty.
+    qnode_identity_id: NonEmptyStr                                    # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
+    qnode_type_ids: tuple[NonEmptyStr, ...] = Field(min_length=1)     # Value can be one or more DWD Qnode IDs and cannot be empty.
 
 
 class ClaimerAffiliation(_Frozen):
     """
     A claimer's affiliation, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
     """
-    name: NonEmptyStr                       # Value can be a string or "EMPTY_NA" (the ClaimerAffiliation object is not instantiated at all).
-    qnode_identity: NonEmptyStr | None      # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
-    qnodes_type: tuple[NonEmptyStr, ...]    # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
+    name: NonEmptyStr                          # Value can be a string or "EMPTY_NA" (the ClaimerAffiliation object is not instantiated at all).
+    qnode_identity_id: NonEmptyStr | None      # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
+    qnode_type_ids: tuple[NonEmptyStr, ...]    # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
 
 
 class Claimer(_Frozen):
@@ -40,8 +35,8 @@ class Claimer(_Frozen):
     A claimer, consisting of a name, an identity Qnode, type Qnodes, a provenance, and up to 3 affiliations.
     """
     name: NonEmptyStr                                                                 # Value is a string and cannot be empty.
-    qnode_identity: NonEmptyStr | None                                                # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
-    qnodes_type: tuple[NonEmptyStr, ...] = Field(min_length=1)                        # Value can be one or more DWD Qnode IDs and cannot be empty.
+    qnode_identity_id: NonEmptyStr | None                                             # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
+    qnode_type_ids: tuple[NonEmptyStr, ...] = Field(min_length=1)                     # Value can be one or more DWD Qnode IDs and cannot be empty.
     provenance: str | None                                                            # Value can be a string or "EMPTY_NA" (set to None).
     affiliations: tuple[ClaimerAffiliation, ...] = Field(default=(), max_length=3)    # Value can be up to 3 claimer affiliations.
 
@@ -71,20 +66,20 @@ class ClaimLocation(_Frozen):
     """
     The place where the claim was made, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
     """
-    name: NonEmptyStr                      # Value can be a string or "EMPTY_NA" (the ClaimLocation object is not instantiated at all).
-    qnode_identity: NonEmptyStr | None     # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
-    qnodes_type: tuple[NonEmptyStr, ...]   # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
-    provenance: NonEmptyStr | None         # Value can be a string or "EMPTY_NA" (set to None).
+    name: NonEmptyStr                         # Value can be a string or "EMPTY_NA" (the ClaimLocation object is not instantiated at all).
+    qnode_identity_id: NonEmptyStr | None     # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
+    qnode_type_ids: tuple[NonEmptyStr, ...]   # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
+    provenance: NonEmptyStr | None            # Value can be a string or "EMPTY_NA" (set to None).
 
 
 class ClaimMedium(_Frozen):
     """
     The broadcast source on where the claim was asserted, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
     """
-    name: NonEmptyStr                      # Value can be a string or "EMPTY_NA" (the ClaimMedium object is not instantiated at all).
-    qnode_identity: NonEmptyStr | None     # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
-    qnodes_type: tuple[NonEmptyStr, ...]   # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
-    provenance: NonEmptyStr | None         # Value can be a string or "EMPTY_NA" (set to None).
+    name: NonEmptyStr                         # Value can be a string or "EMPTY_NA" (the ClaimMedium object is not instantiated at all).
+    qnode_identity_id: NonEmptyStr | None     # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
+    qnode_type_ids: tuple[NonEmptyStr, ...]   # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
+    provenance: NonEmptyStr | None            # Value can be a string or "EMPTY_NA" (set to None).
 
 
 class ClaimFrame(_Frozen):

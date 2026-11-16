@@ -2,7 +2,7 @@ from enum import StrEnum
 from pydantic import Field
 from typing import Annotated, Literal
 from .ids import MentionID, RootUID
-from ._base import _Frozen
+from ._base import _Frozen, NonEmptyStr
 
 
 class KEAttribute(StrEnum):
@@ -13,23 +13,29 @@ class KEAttribute(StrEnum):
 
 
 class RelationKE(_Frozen):
+    ke_type: Literal["relation"]
     root_uid: RootUID
     mention_id: MentionID
-    ke_type: Literal["relation"]
+    description: str
+    qnode_type_ids: tuple[NonEmptyStr, ...]
     attributes: tuple[KEAttribute, ...]
 
 
 class EventKE(_Frozen):
+    ke_type: Literal["event"]
     root_uid: RootUID
     mention_id: MentionID
-    ke_type: Literal["event"]
+    description: str
+    qnode_type_ids: tuple[NonEmptyStr, ...]
     attributes: tuple[KEAttribute, ...]
 
 
 class ArgumentKE(_Frozen):
+    ke_type: Literal["entity"]
     root_uid: RootUID
     mention_id: MentionID
-    ke_type: Literal["entity"]
+    description: str
+    qnode_type_ids: tuple[NonEmptyStr, ...]
     attributes: tuple[KEAttribute, ...]
 
 
