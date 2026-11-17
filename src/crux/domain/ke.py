@@ -7,6 +7,7 @@ from pydantic import Field
 from typing import Annotated
 from .ids import MentionID, RootUID
 from ._base import _Frozen, NonEmptyStr
+from .ldc_time import KEDatetime
 
 
 class KEAttribute(StrEnum):
@@ -23,6 +24,7 @@ class RelationKE(_Frozen):
     description: str
     qnode_type_ids: tuple[NonEmptyStr, ...]
     attributes: tuple[KEAttribute, ...]
+    datetime: KEDatetime | None = None
 
 
 class EventKE(_Frozen):
@@ -32,6 +34,7 @@ class EventKE(_Frozen):
     description: str
     qnode_type_ids: tuple[NonEmptyStr, ...]
     attributes: tuple[KEAttribute, ...]
+    datetime: KEDatetime | None = None
 
 
 class ArgumentKE(_Frozen):

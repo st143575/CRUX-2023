@@ -11,10 +11,21 @@ from pydantic import Field, model_validator
 from ._base import _Frozen
 
 
-class DatetimeType(StrEnum):
+class ClaimDatetimeType(StrEnum):
     BEFORE = "before"
     ON = "on"
     AFTER = "after"
+
+
+class KEDatetimeType(StrEnum):
+    STARTBEFORE = "startbefore"
+    STARTON = "starton"
+    STARTAFTER = "startafter"
+    STARTUNKNOWN = "startunk"
+    ENDBEFORE = "endbefore"
+    ENDON = "endon"
+    ENDAFTER = "endafter"
+    ENDUNKNOWN = "endunk"
 
 
 _UNKNOWN_TOKENS = frozenset({"unknown", "EMPTY_NA", ""})
@@ -31,7 +42,7 @@ class ClaimDatetime(_Frozen):
     When a claim was made. Components that the document does not give are None.
     A fully unknown claim datetime is represented by None, not by this class.
     """
-    type: DatetimeType
+    type: ClaimDatetimeType
     year: int | None = Field(default=None, ge=1, le=9999)
     month: int | None = Field(default=None, ge=1, le=12)
     day: int | None = Field(default=None, ge=1, le=31)
@@ -59,7 +70,50 @@ class ClaimDatetime(_Frozen):
         values = [None if p[0] in "Xx" else int(p) for p in parts]
         if all(v is None for v in values):
             return None
-        return cls(type=DatetimeType(type_), **dict(zip(_PARTS, values)))
+        return cls(type=ClaimDatetimeType(type_), **dict(zip(_PARTS, values)))
+
+    def __str__(self) -> str:
+        def part(value: int | None, width: int, x: str) -> str:
+            return x * width if value is None else f"{value:0{width}d}"
+        ymd = "-".join((part(self.year, 4, "X"), part(self.month, 2, "X"), part(self.day, 2, "X")))
+        hms = ":".join(part(v, 2, "x") for v in (self.hour, self.minute, self.second))
+        return f"{self.type.value} {ymd}T{hms}"
+
+
+class KEDatetime(_Frozen):
+    """
+    When an event/relation occurred. Components that the document does not give are None.
+    A fully unknown event/relation datetime is represented by None, not by this class.
+    """
+    type: KEDatetimeType
+    year: int | None = Field(default=None, ge=1, le=9999)
+    month: int | None = Field(default=None, ge=1, le=12)
+    day: int | None = Field(default=None, ge=1, le=31)
+    hour: int | None = Field(default=None, ge=0, le=23)
+    minute: int | None = Field(default=None, ge=0, le=59)
+    second: int | None = Field(default=None, ge=0, le=59)
+
+    @model_validator(mode="after")
+    def _check(self) -> KEDatetime:
+        if all(getattr(self, p) is None for p in _PARTS):
+            raise ValueError("KE datetime has unknown component; use None for an unknown KE datetime")
+        if self.year and self.month and self.day:
+            date(self.year, self.month, self.day)
+        return self
+
+    @classmethod
+    def parse(cls, raw: str) -> KEDatetime | None:
+        raw = raw.strip()
+        if raw in _UNKNOWN_TOKENS:
+            return None
+        m = _PATTERN.fullmatch(raw)
+        if m is None:
+            raise ValueError(f"malformed KE datetime: {raw!r}")
+        type_, *parts = m.groups()
+        values = [None if p[0] in "Xx" else int(p) for p in parts]
+        if all(v is None for v in values):
+            return None
+        return cls(type=KEDatetimeType(type_), **dict(zip(_PARTS, values)))
 
     def __str__(self) -> str:
         def part(value: int | None, width: int, x: str) -> str:
