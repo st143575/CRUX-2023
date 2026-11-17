@@ -1,6 +1,10 @@
+"""
+Domain model for Knowledge Elements (KEs).
+"""
+
 from enum import StrEnum
 from pydantic import Field
-from typing import Annotated, Literal
+from typing import Annotated
 from .ids import MentionID, RootUID
 from ._base import _Frozen, NonEmptyStr
 
@@ -13,7 +17,7 @@ class KEAttribute(StrEnum):
 
 
 class RelationKE(_Frozen):
-    ke_type: Literal["relation"]
+    ke_type: "relation"
     root_uid: RootUID
     mention_id: MentionID
     description: str
@@ -22,7 +26,7 @@ class RelationKE(_Frozen):
 
 
 class EventKE(_Frozen):
-    ke_type: Literal["event"]
+    ke_type: "event"
     root_uid: RootUID
     mention_id: MentionID
     description: str
@@ -31,7 +35,7 @@ class EventKE(_Frozen):
 
 
 class ArgumentKE(_Frozen):
-    ke_type: Literal["entity"]
+    ke_type: "entity"
     root_uid: RootUID
     mention_id: MentionID
     description: str
@@ -40,6 +44,6 @@ class ArgumentKE(_Frozen):
 
 
 KE = Annotated[
-    RelationKE | EventKE | ArgumentKE, 
+    RelationKE | EventKE | ArgumentKE,
     Field(discriminator="ke_type")
 ]

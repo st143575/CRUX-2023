@@ -4,7 +4,6 @@ Domain model for claim frames.
 
 from __future__ import annotations
 
-
 from enum import StrEnum
 from pydantic import Field, model_validator
 from ._base import _Frozen, NonEmptyStr

@@ -1,3 +1,7 @@
+"""
+Domain model for the system output.
+"""
+
 from ._base import _Frozen, NonEmptyStr
 from .ids import RootUID, ClaimID
 from .claim import EpistemicStatus, SentimentStatus
