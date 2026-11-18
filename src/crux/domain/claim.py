@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from enum import StrEnum
 from pydantic import Field, model_validator
+from .topic import ClaimTemplate
 from ._base import _Frozen, NonEmptyStr
 from .ids import MentionID, RootUID, ClaimID
 from .ldc_time import ClaimDatetime
@@ -22,7 +23,7 @@ class XVariable(_Frozen):
 
 class ClaimerAffiliation(_Frozen):
     """
-    A claimer's affiliation, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
+    A claimer's affiliation, consisting of a name, an identity Qnode, and type Qnodes.
     """
     name: NonEmptyStr                          # Value can be a string or "EMPTY_NA" (the ClaimerAffiliation object is not instantiated at all).
     qnode_identity_id: NonEmptyStr | None      # Value can be a single DWD Qnode ID or NIL Qnode ID, or "EMPTY_NA" (set to None).
@@ -34,9 +35,9 @@ class Claimer(_Frozen):
     A claimer, consisting of a name, an identity Qnode, type Qnodes, a provenance, and up to 3 affiliations.
     """
     name: NonEmptyStr                                                                 # Value is a string and cannot be empty.
-    qnode_identity_id: NonEmptyStr | None                                             # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
+    qnode_identity_id: NonEmptyStr                                                    # Value can be a single DWD Qnode ID or NIL Qnode ID and cannot be empty.
     qnode_type_ids: tuple[NonEmptyStr, ...] = Field(min_length=1)                     # Value can be one or more DWD Qnode IDs and cannot be empty.
-    provenance: str | None                                                            # Value can be a string or "EMPTY_NA" (set to None).
+    provenance: NonEmptyStr | None                                                    # Value can be a string or "EMPTY_NA" (set to None).
     affiliations: tuple[ClaimerAffiliation, ...] = Field(default=(), max_length=3)    # Value can be up to 3 claimer affiliations.
 
 
@@ -81,7 +82,7 @@ class ClaimMedium(_Frozen):
     provenance: NonEmptyStr | None            # Value can be a string or "EMPTY_NA" (set to None).
 
 
-class ClaimFrame(_Frozen):
+class AnnotatedClaimFrame(_Frozen):
     """
     A claim frame provides information about the core claim, the claimer and their affiliations,
     the epistemic and sentiment status of the claim, and the datetime, location and medium of the claim.
@@ -91,9 +92,9 @@ class ClaimFrame(_Frozen):
     """
     root_uid: RootUID
     claim_id: ClaimID
-    topic: NonEmptyStr
-    subtopic: NonEmptyStr
-    claim_template: NonEmptyStr
+    # topic: NonEmptyStr        # topic and subtopic are encapsulated in ClaimTemplate
+    # subtopic: NonEmptyStr
+    claim_template: ClaimTemplate
     x_variable: XVariable
     description: NonEmptyStr
     claim_semantics: tuple[MentionID, ...] = Field(min_length=1, max_length=3)
@@ -106,22 +107,30 @@ class ClaimFrame(_Frozen):
     associated_kes: tuple[MentionID, ...]
 
     @model_validator(mode="after")
-    def _check_semantics_in_associated_kes(self) -> ClaimFrame:
+    def _check_semantics_in_associated_kes(self) -> AnnotatedClaimFrame:
         missing = set(self.claim_semantics) - set(self.associated_kes)
         if missing:
             raise ValueError(f"{self.claim_id}: claim semantics not in associated KEs: {sorted(missing)}")
         return self
 
     @model_validator(mode="after")
-    def _check_semantics_types(self) -> ClaimFrame:
+    def _check_semantics_types(self) -> AnnotatedClaimFrame:
         for ke in self.claim_semantics:
             if not ke.startswith("VM") and not ke.startswith("RM"):
                 raise ValueError(f"{self.claim_id}: claim semantics must be event KEs (VM) or relation KEs (RM): {ke}")
         return self
 
     @model_validator(mode="after")
-    def _check_associated_kes_types(self) -> ClaimFrame:
+    def _check_associated_kes_types(self) -> AnnotatedClaimFrame:
         for ke in self.associated_kes:
             if not ke.startswith("VM") and not ke.startswith("RM"):
                 raise ValueError(f"{self.claim_id}: associated KEs must be event KEs (VM) or relation KEs (RM): {ke}")
         return self
+
+    @property
+    def topic(self) -> str:
+        return self.claim_template.topic
+    
+    @property
+    def subtopic(self) -> str:
+        return self.claim_template.subtopic

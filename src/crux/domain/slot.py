@@ -4,12 +4,12 @@ Domain model for KE slots.
 
 from ._base import _Frozen, NonEmptyStr
 from .ids import MentionID, RootUID
-from typing import Annotated
+from typing import Annotated, Literal
 from pydantic import Field
 
 
 class RelationSlot(_Frozen):
-    slot_type: "relation"
+    slot_type: Literal["relation"] = "relation"
     root_uid: RootUID
     relationmention_id: MentionID
     general_slot_type: NonEmptyStr      # Value can be 'A0', 'A1', or 'EMPTY_TBD'.
@@ -17,7 +17,7 @@ class RelationSlot(_Frozen):
 
 
 class EventSlot(_Frozen):
-    slot_type: "event"
+    slot_type: Literal["event"] = "event"
     root_uid: RootUID
     eventmention_id: MentionID
     general_slot_type: NonEmptyStr      # One of 101 candidate values (see tmp/check_data_sample.ipynb).

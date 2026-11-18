@@ -9,6 +9,16 @@ __pycache__/
 .env
 
 # Directories
+configs/*
+!configs/.gitkeep
 data/*
 !data/.gitkeep
+evals/*
+!evals/.gitkeep
+tests/*
+!tests/.gitkeep
 tmp/
+runs/
+
+# Notebooks
+src/crux/eval/scorers.ipynb

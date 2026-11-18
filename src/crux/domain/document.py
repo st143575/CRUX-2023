@@ -4,7 +4,7 @@ Domain model for documents.
 
 from __future__ import annotations
 
-from ._base import _Frozen
+from ._base import _Frozen, NonEmptyStr
 from datetime import date
 from enum import StrEnum
 from pydantic import Field, model_validator
@@ -51,7 +51,7 @@ class _ChildAssetBase(_Frozen):
         asset_type: The type of the child asset file, e.g., ".ltf.xml", ".jpg", ".mp3" etc.
     """
     child_uid: ChildUID
-    url: str
+    url: NonEmptyStr
     asset_type: str
 
 
@@ -76,7 +76,7 @@ class Segment(_Frozen):
 
 class TextChildAsset(_ChildAssetBase):
     modality: Literal[Modality.TEXT] = Modality.TEXT
-    language: str
+    language: NonEmptyStr
     text: str
     segments: tuple[Segment, ...]
 
@@ -84,7 +84,7 @@ class TextChildAsset(_ChildAssetBase):
     def _check_segments(self) -> TextChildAsset:
         seen: set[SegmentID] = set()
         for seg in self.segments:
-            if not 0 <= seg.start <= seg.end <= len(self.text):
+            if not 1 <= seg.start <= seg.end <= len(self.text):
                 raise ValueError(f"{self.child_uid}: segment {seg.seg_id} out of range")
             if seg.seg_id in seen:
                 raise ValueError(f"{self.child_uid}: duplicate segment {seg.seg_id}")
@@ -92,7 +92,7 @@ class TextChildAsset(_ChildAssetBase):
         return self
 
     def segment_text(self, seg: Segment) -> str:
-        return self.text[seg.start:seg.end]
+        return self.text[seg.start - 1 : seg.end]
 
 
 class ImageChildAsset(_ChildAssetBase):
@@ -133,7 +133,7 @@ class Document(_Frozen):
     """
     root_uid: RootUID
     content_date: date | None
-    source_url: str | None
+    source_url: NonEmptyStr | None
     child_assets: tuple[ChildAsset, ...] = ()
 
     @property
@@ -153,7 +153,7 @@ class Document(_Frozen):
         return tuple(a for a in self.child_assets if isinstance(a, AudioChildAsset))
 
     @property
-    def language(self) -> str | None:
+    def language(self) -> NonEmptyStr | None:
         """
         Language of the document, determined by the language of the text asset.
         """
