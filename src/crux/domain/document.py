@@ -65,8 +65,8 @@ class Segment(_Frozen):
         end: The end index of the segment.
 
     Note: 
-        The LDC annotation uses 1-based indexing with inclusive end. 
-        For example, if the segment is "Hello", the start index is 1 ("H") and the end index is 5 ("o").
+        The LDC annotation uses 0-based indexing with inclusive end. 
+        The rsd text may start with a newline ('\n'), so the first segment often has start=1.
         This domain model uses the same indexing for consistency.
     """
     seg_id: SegmentID
@@ -84,7 +84,7 @@ class TextChildAsset(_ChildAssetBase):
     def _check_segments(self) -> TextChildAsset:
         seen: set[SegmentID] = set()
         for seg in self.segments:
-            if not 1 <= seg.start <= seg.end <= len(self.text):
+            if not 0 <= seg.start <= seg.end < len(self.text):
                 raise ValueError(f"{self.child_uid}: segment {seg.seg_id} out of range")
             if seg.seg_id in seen:
                 raise ValueError(f"{self.child_uid}: duplicate segment {seg.seg_id}")
@@ -92,7 +92,7 @@ class TextChildAsset(_ChildAssetBase):
         return self
 
     def segment_text(self, seg: Segment) -> str:
-        return self.text[seg.start - 1 : seg.end]
+        return self.text[seg.start : seg.end + 1]
 
 
 class ImageChildAsset(_ChildAssetBase):

@@ -16,6 +16,16 @@ from .ldc_time import ClaimDatetime
 from .topic import ClaimTemplate
 
 
+OUTPUT_COLUMNS: tuple[str, ...] = (
+    "root_uid", "claim_id", "topic", "claim_template", "x_variable", "claimer",
+    "epistemic_status", "claimer_affiliation", "sentiment_status",
+    "claim_datetime", "claim_location", "claim_medium",
+)
+
+# Annotation guidelines and gold use "author"; KBs may use "default: document author".
+AUTHOR_OUTPUT_MENTION = "author"
+
+
 class OutputClaimFrame(_Frozen):
     """
     A claim frame provides information about the core claim, the claimer and their affiliations,
@@ -30,17 +40,16 @@ class OutputClaimFrame(_Frozen):
     epistemic_status: EpistemicStatus
     claimer_affiliation: KBEntry | None             # Value must be an entity mention in a per-document KB; None must be mapped to "EMPTY_NA"
     sentiment_status: SentimentStatus
-    claim_datetime: ClaimDatetime | None            # Value must be an entity mention in a per-document KB; None must be mapped to "EMPTY_NA"
+    claim_datetime: ClaimDatetime | None
     claim_location: KBEntry | None                  # Value must be an entity mention in a per-document KB; None must be mapped to "EMPTY_NA"
     claim_medium: KBEntry | None                    # Value must be an entity mention in a per-document KB; None must be mapped to "EMPTY_NA"
 
     @model_validator(mode="after")
-    def _check_same_kb(self) -> OutputClaimFrame:
-        entries = [self.x_variable, self.claimer, self.claimer_affiliation,
-                self.claim_location, self.claim_medium]
-        doc_ids = {e.doc_id for e in entries if e is not None}
-        if len(doc_ids) > 1:
-            raise ValueError(f"{self.claim_id}: KB entries from different documents: {doc_ids}")
+    def _check_kb_entries(self) -> OutputClaimFrame:
+        for e in (self.x_variable, self.claimer, self.claimer_affiliation,
+                self.claim_location, self.claim_medium):
+            if e is not None and e.root_uid != self.root_uid:
+                raise ValueError(f"{self.claim_id}: KB entry {e.ent_id} belongs to {e.root_uid}")
         return self
 
     @property
@@ -53,6 +62,7 @@ class OutputClaimFrame(_Frozen):
             return v if v is not None else "EMPTY_NA"
         
         aff = self.claimer_affiliation.entity_mention if self.claimer_affiliation else None
+        claimer = AUTHOR_OUTPUT_MENTION if self.claimer.is_author else self.claimer.entity_mention
         
         return (
             self.root_uid, 
@@ -60,7 +70,7 @@ class OutputClaimFrame(_Frozen):
             self.claim_template.topic, 
             self.claim_template.template_text,
             self.x_variable.entity_mention, 
-            self.claimer.entity_mention,
+            claimer,
             self.epistemic_status.value, 
             _none2str(aff), 
             self.sentiment_status.value,
