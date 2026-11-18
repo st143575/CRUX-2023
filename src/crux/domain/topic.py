@@ -12,8 +12,8 @@ from typing import NewType
 from ._base import _Frozen, NonEmptyStr
 
 
-TemplateID = NewType("TemplateID", NonEmptyStr)   # 例如 "C303"；对应一个 subtopic 及其模板
-TopicName = NewType("TopicName", NonEmptyStr)
+TemplateID = NewType("TemplateID", NonEmptyStr)   # the "ID" field in the LDC2021E11 dataset corresponding to a subtopic and its template, e.g., "C303".
+TopicName = NewType("TopicName", NonEmptyStr)     # the "Topic" field in the LDC2021E11 dataset
 
 # "X", "Animal-X", "location/GPE/facility-x", "Government-X" etc.
 _X_PLACEHOLDER = re.compile(
