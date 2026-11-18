@@ -49,8 +49,8 @@ class ClaimDatetime(_Frozen):
     def _check(self) -> ClaimDatetime:
         if all(getattr(self, p) is None for p in _PARTS):
             raise ValueError("Claim datetime has unknown component; use None for an unknown claim datetime")
-        if self.year and self.month and self.day:
-            date(self.year, self.month, self.day)
+        if self.month and self.day:
+            date(self.year or 2000, self.month, self.day)
         return self
 
     @classmethod
@@ -94,8 +94,8 @@ class KEDate(_Frozen):
     def _check(self) -> KEDate:
         if all(getattr(self, p) is None for p in ("year", "month", "day")):
             raise ValueError("KEDate has unknown component; use None for an unknown KEDate")
-        if self.year and self.month and self.day:
-            date(self.year, self.month, self.day)
+        if self.month and self.day:
+            date(self.year or 2000, self.month, self.day)
         return self
 
     @classmethod
