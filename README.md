@@ -1,4 +1,4 @@
-# Claim Relation Understanding and Extraction (CRUX)
+# Claim Relation Understanding and eXtraction (CRUX)
 
 This is a re-development of our system for the NIST TAC 2023 CRUX Track with a new design using a 2026 technology stack. To reproduce the system submitted to the TAC 2023 evaluation, please switch to the branch `nist-tac-2023-crux-workshop`.
 
