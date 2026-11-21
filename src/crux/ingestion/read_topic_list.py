@@ -8,7 +8,7 @@ import csv
 from collections import Counter
 from collections.abc import Callable, Hashable, Iterable
 from crux.domain.topic import ClaimTemplate
-from crux.ingestion.issues import IngestionIssue, _summarize
+from crux.ingestion.issues import IngestionIssue, summarize_validation_error
 from pathlib import Path
 from pydantic import ValidationError
 
@@ -54,7 +54,7 @@ def read_topic_list(path: Path, columns: dict[str, str] = DEFAULT_COLUMNS) -> tu
             try:
                 templates.append(ClaimTemplate.model_validate({field: row[col] for col, field in columns.items()}))
             except ValidationError as e:
-                issues.append(IngestionIssue.error(path, where, _summarize(e)))
+                issues.append(IngestionIssue.error(path, where, summarize_validation_error(e)))
     
     issues.extend(_check_unique(path, templates, "template_id", lambda t: t.template_id))
     issues.extend(_check_unique(path, templates, "(topic, subtopic)", lambda t: (t.topic, t.subtopic)))

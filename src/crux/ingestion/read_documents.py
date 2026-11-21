@@ -27,7 +27,7 @@ from crux.domain.document import (
     VideoChildAsset,
 )
 from crux.domain.ids import ChildUID, RootUID, SegmentID
-from crux.ingestion.issues import IngestionIssue, _summarize
+from crux.ingestion.issues import IngestionIssue, summarize_validation_error
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -168,6 +168,10 @@ def index_files(directory: Path, suffix: str) -> tuple[dict[str, Path], list[Ing
     """
     index: dict[str, Path] = {}
     issues: list[IngestionIssue] = []
+    
+    if not directory.is_dir():
+        return index, [IngestionIssue.error(directory, "directory", "directory not found")] 
+    
     for path in sorted(directory.rglob(f"*{suffix}")):
         uid = path.name.removesuffix(suffix)
         if uid in index:
@@ -280,7 +284,7 @@ def read_text_asset(row: ChildRow, ltf_index: Mapping[str, Path], rsd_index: Map
             segments=tuple(segments)
         )
     except ValidationError as e:
-        issues.append(IngestionIssue.error(ltf_path, "asset", _summarize(e)))
+        issues.append(IngestionIssue.error(ltf_path, "asset", summarize_validation_error(e)))
         return None, issues
     
     return asset, issues
@@ -334,7 +338,7 @@ def build_document(
         if row.child_asset_type == TEXT_ASSET_TYPE:
             asset, asset_issues = read_text_asset(row, ltf_index, rsd_index)
             issues.extend(asset_issues)
-            if asset:
+            if asset is not None:
                 assets.append(asset)
             continue
 
@@ -347,7 +351,7 @@ def build_document(
         ref = ChildAssetRef(
             locator=f"{row.child_uid}{row.child_asset_type}",
             media_type=media_type, 
-            md5=row.unwrapped_md5 or None
+            md5=row.unwrapped_md5
         )
 
         cls = {
@@ -359,7 +363,7 @@ def build_document(
         try:
             assets.append(cls(child_uid=ChildUID(row.child_uid), url=row.url, asset_type=row.child_asset_type, content=ref))
         except ValidationError as e:
-            issues.append(IngestionIssue.error(source, where, _summarize(e)))
+            issues.append(IngestionIssue.error(source, where, summarize_validation_error(e)))
 
     if not any(isinstance(a, TextChildAsset) for a in assets):
         issues.append(IngestionIssue.warning(source, root_uid, "document has no usable text asset"))
@@ -372,7 +376,7 @@ def build_document(
             child_assets=tuple(assets),
         )
     except ValidationError as e:
-        issues.append(IngestionIssue.error(source, root_uid, _summarize(e)))
+        issues.append(IngestionIssue.error(source, root_uid, summarize_validation_error(e)))
         return None, issues
     
     return doc, issues

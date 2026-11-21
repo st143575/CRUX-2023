@@ -15,6 +15,9 @@ CLAIMER_AUTHOR_MENTIONS: frozenset[str] = frozenset({"author", "default: documen
 
 
 class KBEntry(_Frozen):
+    """
+    An entry in a document's knowledge base.
+    """
     root_uid: RootUID
     ent_id: NonEmptyStr
     entity_mention: NonEmptyStr
@@ -34,6 +37,9 @@ class KBLinking(_Frozen):
 
 
 class DocumentKB(_Frozen):
+    """
+    A knowledge base for a single document.
+    """
     root_uid: RootUID
     entries: tuple[KBEntry, ...]
 

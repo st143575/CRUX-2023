@@ -30,7 +30,7 @@ class IngestionIssue:
         return cls(IssueType.WARNING, str(source), location, message)
 
 
-def _summarize(e: ValidationError) -> str:
+def summarize_validation_error(e: ValidationError) -> str:
     """
     Summarize a Pydantic validation error into a concise string.
     """
