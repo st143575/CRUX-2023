@@ -57,7 +57,7 @@ class _ChildAssetBase(_Frozen):
 
 class Segment(_Frozen):
     """
-    A span of TextChildAsset.text, located by character offsets (end inclusive).
+    A span of TextChildAsset.text, located by character offsets (0-based indexing, inclusive end).
     
     Attributes:
         seg_id: The ID of the segment.
@@ -65,7 +65,7 @@ class Segment(_Frozen):
         end: The end index of the segment.
 
     Note: 
-        The LDC annotation uses 0-based indexing with inclusive end. 
+        The LDC annotation uses 0-based indexing with inclusive end.
         The rsd text may start with a newline ('\n'), so the first segment often has start=1.
         This domain model uses the same indexing for consistency.
     """

@@ -8,12 +8,13 @@ from __future__ import annotations
 
 import re
 from pydantic import model_validator
-from typing import NewType
-from ._base import _Frozen, NonEmptyStr
+from typing import Annotated, NewType
+from ._base import _Frozen, NonEmptyStr, _NON_EMPTY
 
 
-TemplateID = NewType("TemplateID", NonEmptyStr)   # the "ID" field in the LDC2021E11 dataset corresponding to a subtopic and its template, e.g., "C303".
-TopicName = NewType("TopicName", NonEmptyStr)     # the "Topic" field in the LDC2021E11 dataset
+TemplateID = NewType("TemplateID", str)   # the "ID" field in the LDC2021E11 dataset corresponding to a subtopic and its template, e.g., "C303".
+TopicName = NewType("TopicName", str)     # the "Topic" field in the LDC2021E11 dataset
+
 
 # "X", "Animal-X", "location/GPE/facility-x", "Government-X" etc.
 _X_PLACEHOLDER = re.compile(
@@ -21,8 +22,8 @@ _X_PLACEHOLDER = re.compile(
 )
 
 class ClaimTemplate(_Frozen):
-    template_id: TemplateID
-    topic: TopicName
+    template_id: Annotated[TemplateID, _NON_EMPTY]
+    topic: Annotated[TopicName, _NON_EMPTY]
     subtopic: NonEmptyStr
     template_text: NonEmptyStr
 
