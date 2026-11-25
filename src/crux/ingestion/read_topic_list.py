@@ -79,9 +79,9 @@ def _check_unique(
     ]
 
 
-def index_by_text(templates: Iterable[ClaimTemplate]) -> dict[tuple[str, str], ClaimTemplate]:
+def index_by_text(claim_templates: Iterable[ClaimTemplate]) -> dict[tuple[str, str], ClaimTemplate]:
     """
     (topic, template_text) -> ClaimTemplate; used when reading gold annotations.
     Uniqueness is guaranteed by read_topic_list.
     """
-    return {(t.topic, t.template_text): t for t in templates}
+    return {(t.topic, t.template_text): t for t in claim_templates}
