@@ -1,7 +1,7 @@
 """
 Command-line interface of the crux package.
 
-Run:
+Run Task 1 (CFE) scoring:
     crux score task1 PATH_TO_SYSTEM_OUTPUT PATH_TO_GOLD [--keep-empty-na] [--raw] [--lenient] [--docs FILE] [--json FILE] [-v]
 """
 
