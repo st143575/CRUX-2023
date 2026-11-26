@@ -12,4 +12,5 @@ def none2empty_na(value: str | None) -> str:
 
 def empty_na_to_none(value: str) -> str | None:
     """Convert EMPTY_NA or empty string to None."""
+    value = value.strip()
     return None if value in EMPTY_TOKENS else value
