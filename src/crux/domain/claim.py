@@ -7,12 +7,12 @@ from __future__ import annotations
 from enum import StrEnum
 from pydantic import Field, model_validator
 from .topic import ClaimTemplate
-from ._base import _Frozen, NonEmptyStr
+from .base import Frozen, NonEmptyStr
 from .ids import MentionID, RootUID, ClaimID
 from .ldc_time import ClaimDatetime
 
 
-class XVariable(_Frozen):
+class XVariable(Frozen):
     """
     The item that fills the X in the claim template, as well as its identity Qnode and type Qnodes.
     """
@@ -21,7 +21,7 @@ class XVariable(_Frozen):
     qnode_type_ids: tuple[NonEmptyStr, ...] = Field(min_length=1)     # Value can be one or more DWD Qnode IDs and cannot be empty.
 
 
-class ClaimerAffiliation(_Frozen):
+class ClaimerAffiliation(Frozen):
     """
     A claimer's affiliation, consisting of a name, an identity Qnode, and type Qnodes.
     """
@@ -30,7 +30,7 @@ class ClaimerAffiliation(_Frozen):
     qnode_type_ids: tuple[NonEmptyStr, ...]    # Value can be one or more DWD Qnode IDs, or "EMPTY_NA" (set to empty tuple).
 
 
-class Claimer(_Frozen):
+class Claimer(Frozen):
     """
     A claimer, consisting of a name, an identity Qnode, type Qnodes, a provenance, and up to 3 affiliations.
     """
@@ -62,7 +62,7 @@ class SentimentStatus(StrEnum):
     NEUTRAL = "neutral-unknown"
 
 
-class ClaimLocation(_Frozen):
+class ClaimLocation(Frozen):
     """
     The place where the claim was made, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
     """
@@ -72,7 +72,7 @@ class ClaimLocation(_Frozen):
     provenance: NonEmptyStr | None            # Value can be a string or "EMPTY_NA" (set to None).
 
 
-class ClaimMedium(_Frozen):
+class ClaimMedium(Frozen):
     """
     The broadcast source on where the claim was asserted, consisting of a name, an identity Qnode, type Qnodes, and a provenance.
     """
@@ -82,7 +82,7 @@ class ClaimMedium(_Frozen):
     provenance: NonEmptyStr | None            # Value can be a string or "EMPTY_NA" (set to None).
 
 
-class AnnotatedClaimFrame(_Frozen):
+class AnnotatedClaimFrame(Frozen):
     """
     A claim frame provides information about the core claim, the claimer and their affiliations,
     the epistemic and sentiment status of the claim, and the datetime, location and medium of the claim.

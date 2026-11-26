@@ -5,7 +5,7 @@ Domain model for the knowledge base.
 from __future__ import annotations
 
 from pydantic import model_validator
-from ._base import _Frozen, NonEmptyStr
+from .base import Frozen, NonEmptyStr
 from .ids import MentionID, RootUID
 
 
@@ -14,7 +14,7 @@ from .ids import MentionID, RootUID
 CLAIMER_AUTHOR_MENTIONS: frozenset[str] = frozenset({"author", "default: document author"})
 
 
-class KBEntry(_Frozen):
+class KBEntry(Frozen):
     """
     An entry in a document's knowledge base.
     """
@@ -27,7 +27,7 @@ class KBEntry(_Frozen):
         return self.entity_mention in CLAIMER_AUTHOR_MENTIONS
 
 
-class KBLinking(_Frozen):
+class KBLinking(Frozen):
     qnode_kb_identity_id: NonEmptyStr
     mention_id: MentionID
     root_uid: RootUID
@@ -36,7 +36,7 @@ class KBLinking(_Frozen):
     generic: bool
 
 
-class DocumentKB(_Frozen):
+class DocumentKB(Frozen):
     """
     A knowledge base for a single document.
     """

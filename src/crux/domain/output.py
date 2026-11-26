@@ -5,7 +5,8 @@ Domain model for the system output.
 from __future__ import annotations
 
 from pydantic import model_validator
-from ._base import _Frozen, NonEmptyStr
+from typing import NamedTuple
+from .base import Frozen, NonEmptyStr
 from .claim import (
     EpistemicStatus,
     SentimentStatus,
@@ -13,20 +14,32 @@ from .claim import (
 from .ids import RootUID, ClaimID
 from .kb import KBEntry
 from .ldc_time import ClaimDatetime
+from .missing_value import none2empty_na
 from .topic import ClaimTemplate
 
 
-OUTPUT_COLUMNS: tuple[str, ...] = (
-    "root_uid", "claim_id", "topic", "claim_template", "x_variable", "claimer",
-    "epistemic_status", "claimer_affiliation", "sentiment_status",
-    "claim_datetime", "claim_location", "claim_medium",
-)
+class OutputClaimFrameFields(NamedTuple):
+    root_uid: str
+    claim_id: str
+    topic: str
+    claim_template: str
+    x_variable: str
+    claimer: str
+    epistemic_status: str
+    claimer_affiliation: str
+    sentiment_status: str
+    claim_datetime: str
+    claim_location: str
+    claim_medium: str
+
+# The 12 output field names for Task 1.
+OUTPUT_COLUMNS: tuple[str, ...] = OutputClaimFrameFields._fields
 
 # Annotation guidelines and gold use "author"; KBs may use "default: document author".
 AUTHOR_OUTPUT_MENTION = "author"
 
 
-class OutputClaimFrame(_Frozen):
+class OutputClaimFrame(Frozen):
     """
     A claim frame provides information about the core claim, the claimer and their affiliations,
     the epistemic and sentiment status of the claim, and the datetime, location and medium of the claim.
@@ -56,25 +69,21 @@ class OutputClaimFrame(_Frozen):
     def subtopic(self) -> NonEmptyStr:
         return self.claim_template.subtopic
 
-    def to_row(self) -> tuple[str, ...]:
-        def _none2str(v: str | None) -> str:
-            """Convert None to "EMPTY_NA"."""
-            return v if v is not None else "EMPTY_NA"
-        
-        aff = self.claimer_affiliation.entity_mention if self.claimer_affiliation else None
+    def to_row(self) -> OutputClaimFrameFields:
+        affiliation = self.claimer_affiliation.entity_mention if self.claimer_affiliation else None
         claimer = AUTHOR_OUTPUT_MENTION if self.claimer.is_author else self.claimer.entity_mention
         
-        return (
-            self.root_uid, 
+        return OutputClaimFrameFields(
+            self.root_uid,
             self.claim_id,
-            self.claim_template.topic, 
+            self.claim_template.topic,
             self.claim_template.template_text,
-            self.x_variable.entity_mention, 
+            self.x_variable.entity_mention,
             claimer,
-            self.epistemic_status.value, 
-            _none2str(aff), 
+            self.epistemic_status.value,
+            none2empty_na(affiliation),
             self.sentiment_status.value,
-            _none2str(str(self.claim_datetime) if self.claim_datetime else None),
-            _none2str(self.claim_location.entity_mention if self.claim_location else None),
-            _none2str(self.claim_medium.entity_mention if self.claim_medium else None),
+            none2empty_na(str(self.claim_datetime) if self.claim_datetime else None),
+            none2empty_na(self.claim_location.entity_mention if self.claim_location else None),
+            none2empty_na(self.claim_medium.entity_mention if self.claim_medium else None),
         )

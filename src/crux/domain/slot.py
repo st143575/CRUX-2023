@@ -2,13 +2,13 @@
 Domain model for KE slots.
 """
 
-from ._base import _Frozen, NonEmptyStr
+from .base import Frozen, NonEmptyStr
 from .ids import MentionID, RootUID
 from typing import Annotated, Literal
 from pydantic import Field
 
 
-class RelationSlot(_Frozen):
+class RelationSlot(Frozen):
     slot_type: Literal["relation"] = "relation"
     root_uid: RootUID
     relationmention_id: MentionID
@@ -16,7 +16,7 @@ class RelationSlot(_Frozen):
     argmention_id: MentionID
 
 
-class EventSlot(_Frozen):
+class EventSlot(Frozen):
     slot_type: Literal["event"] = "event"
     root_uid: RootUID
     eventmention_id: MentionID

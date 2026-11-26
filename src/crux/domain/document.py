@@ -4,7 +4,7 @@ Domain model for documents.
 
 from __future__ import annotations
 
-from ._base import _Frozen, NonEmptyStr
+from .base import Frozen, NonEmptyStr
 from datetime import date
 from enum import StrEnum
 from pydantic import Field, model_validator
@@ -26,7 +26,7 @@ IN_SCOPE_MODALITIES: frozenset[Modality] = frozenset({Modality.TEXT, Modality.IM
 EVAL_LANGUAGES: frozenset[str] = frozenset({"eng", "spa", "rus"})
 
 
-class ChildAssetRef(_Frozen):
+class ChildAssetRef(Frozen):
     """
     Opaque pointer to binary content. 
     Resolved by an AssetLoader port, never by the domain.
@@ -41,7 +41,7 @@ class ChildAssetRef(_Frozen):
     md5: str | None = None
 
 
-class _ChildAssetBase(_Frozen):
+class _ChildAssetBase(Frozen):
     """
     A child asset object represents a child asset of a document, including texts, images, videos, and audio.
     
@@ -55,7 +55,7 @@ class _ChildAssetBase(_Frozen):
     asset_type: str
 
 
-class Segment(_Frozen):
+class Segment(Frozen):
     """
     A span of TextChildAsset.text, located by character offsets (0-based indexing, inclusive end).
     
@@ -120,7 +120,7 @@ ChildAsset = Annotated[
     Field(discriminator="modality"),
 ]
 
-class Document(_Frozen):
+class Document(Frozen):
     """
     A document object represents the content of a 'root' HTML web page and its associated child assets, including
     texts, images, videos, and audios.

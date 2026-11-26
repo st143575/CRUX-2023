@@ -7,7 +7,7 @@ from enum import StrEnum
 from pydantic import Field, model_validator
 from typing import Annotated, Literal
 from .ids import MentionID, RootUID
-from ._base import _Frozen, NonEmptyStr
+from .base import Frozen, NonEmptyStr
 from .ldc_time import KEDate, KEDateBound
 
 
@@ -18,7 +18,7 @@ class KEAttribute(StrEnum):
     GENERIC = "generic"
 
 
-class RelationKE(_Frozen):
+class RelationKE(Frozen):
     ke_type: Literal["relation"] = "relation"
     root_uid: RootUID
     mention_id: MentionID
@@ -37,7 +37,7 @@ class RelationKE(_Frozen):
         return self
 
 
-class EventKE(_Frozen):
+class EventKE(Frozen):
     ke_type: Literal["event"] = "event"
     root_uid: RootUID
     mention_id: MentionID
@@ -56,7 +56,7 @@ class EventKE(_Frozen):
         return self
 
 
-class ArgumentKE(_Frozen):
+class ArgumentKE(Frozen):
     """
     Argument KEs do not have start/end datetime.
     """

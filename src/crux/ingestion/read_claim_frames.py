@@ -9,6 +9,7 @@ import csv
 from collections.abc import Iterable
 from crux.domain.claim import AnnotatedClaimFrame
 from crux.domain.ldc_time import ClaimDatetime
+from crux.domain.missing_value import empty_na_to_none
 from crux.domain.topic import ClaimTemplate
 from crux.ingestion.issues import IngestionIssue, summarize_validation_error
 from crux.ingestion.read_topic_list import index_by_text
@@ -34,7 +35,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
 )
 
 
-def read_claim_frames(path: Path, claim_templates: Iterable[ClaimTemplate]) -> tuple[tuple[AnnotatedClaimFrame, ...], list[IngestionIssue]]:
+def read_annotated_claim_frames(path: Path, claim_templates: Iterable[ClaimTemplate]) -> tuple[tuple[AnnotatedClaimFrame, ...], list[IngestionIssue]]:
     """
     Read the LDC claim frame annotation into AnnotatedClaimFrame objects.
     
@@ -86,14 +87,14 @@ def read_claim_frames(path: Path, claim_templates: Iterable[ClaimTemplate]) -> t
 
             affiliations = []
             for suffix in AFFILIATION_SUFFIXES:
-                name = _empty_na_to_none(row[f"claimer_affiliation{suffix}"])
+                name = empty_na_to_none(row[f"claimer_affiliation{suffix}"])
                 if name is None:
-                    if _empty_na_to_none(row[f"qnode_claimer_affiliation_identity{suffix}"]) or _empty_na_to_none(row[f"qnode_claimer_affiliation_type{suffix}"]):
+                    if empty_na_to_none(row[f"qnode_claimer_affiliation_identity{suffix}"]) or empty_na_to_none(row[f"qnode_claimer_affiliation_type{suffix}"]):
                         issues.append(IngestionIssue.error(path, where, f"{claim_id}: missing claimer_affiliation but qnode exists"))
                     continue
                 affiliations.append({
                     "name": name,
-                    "qnode_identity_id": _empty_na_to_none(row[f"qnode_claimer_affiliation_identity{suffix}"]),
+                    "qnode_identity_id": empty_na_to_none(row[f"qnode_claimer_affiliation_identity{suffix}"]),
                     "qnode_type_ids": _empty_na_to_empty_tuple(row[f"qnode_claimer_affiliation_type{suffix}"]),
                 })
 
@@ -103,17 +104,17 @@ def read_claim_frames(path: Path, claim_templates: Iterable[ClaimTemplate]) -> t
                     "claim_id": claim_id,
                     "claim_template": claim_template,
                     "x_variable": {
-                        "name": _empty_na_to_none(row["x_variable"]),
-                        "qnode_identity_id": _empty_na_to_none(row["qnode_x_variable_identity"]),
+                        "name": empty_na_to_none(row["x_variable"]),
+                        "qnode_identity_id": empty_na_to_none(row["qnode_x_variable_identity"]),
                         "qnode_type_ids": _empty_na_to_empty_tuple(row["qnode_x_variable_type"]),
                     },
-                    "description": _empty_na_to_none(row["description"]),
+                    "description": empty_na_to_none(row["description"]),
                     "claim_semantics": _process_ke_mention_ids(row["claim_semantics"]),
                     "claimer": {
-                        "name": _empty_na_to_none(row["claimer"]),
-                        "qnode_identity_id": _empty_na_to_none(row["qnode_claimer_identity"]),
+                        "name": empty_na_to_none(row["claimer"]),
+                        "qnode_identity_id": empty_na_to_none(row["qnode_claimer_identity"]),
                         "qnode_type_ids": _empty_na_to_empty_tuple(row["qnode_claimer_type"]),
-                        "provenance": _empty_na_to_none(row["claimer_provenance"]),
+                        "provenance": empty_na_to_none(row["claimer_provenance"]),
                         "affiliations": affiliations,
                     },
                     "epistemic_status": row["epistemic_status"].strip(),
@@ -132,19 +133,11 @@ def read_claim_frames(path: Path, claim_templates: Iterable[ClaimTemplate]) -> t
     return tuple(claim_frames), issues
 
 
-
-def _empty_na_to_none(value: str) -> str | None:
-    """
-    Strip a cell and map "EMPTY_NA" and "" to None.
-    """
-    value = value.strip()
-    return None if value in ("", "EMPTY_NA") else value
-
 def _empty_na_to_empty_tuple(value: str) -> tuple[str, ...]:
     """
     Strip a cell and map "EMPTY_NA" and "" to empty tuple.
     """
-    type_qnodes = _empty_na_to_none(value)
+    type_qnodes = empty_na_to_none(value)
     return () if type_qnodes is None else tuple(qnode.strip() for qnode in type_qnodes.split("|"))
 
 def _process_ke_mention_ids(value: str) -> tuple[str, ...]:
@@ -152,21 +145,21 @@ def _process_ke_mention_ids(value: str) -> tuple[str, ...]:
     Split the KE mention IDs by comma.
     If the value is EMPTY_NA, return an empty tuple.
     """
-    mention_ids = _empty_na_to_none(value)
+    mention_ids = empty_na_to_none(value)
     return () if mention_ids is None else tuple(mention_id.strip() for mention_id in mention_ids.split(","))
 
 def _process_claim_location_or_medium(row: dict[str, str], name: str) -> dict[str, object] | None:
     """
     Process a ClaimLocation or ClaimMedium object.
     """
-    value = _empty_na_to_none(row[name])
+    value = empty_na_to_none(row[name])
     if value is None:
         return None
     return {
         "name": value,
-        "qnode_identity_id": _empty_na_to_none(row[f"qnode_{name}_identity"]),
+        "qnode_identity_id": empty_na_to_none(row[f"qnode_{name}_identity"]),
         "qnode_type_ids": _empty_na_to_empty_tuple(row[f"qnode_{name}_type"]),
-        "provenance": _empty_na_to_none(row[f"{name}_provenance"]),
+        "provenance": empty_na_to_none(row[f"{name}_provenance"]),
     }
     
     

@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from pydantic import model_validator
 from typing import Annotated, NewType
-from ._base import _Frozen, NonEmptyStr, _NON_EMPTY
+from .base import Frozen, NonEmptyStr, _NON_EMPTY
 
 
 TemplateID = NewType("TemplateID", str)   # the "ID" field in the LDC2021E11 dataset corresponding to a subtopic and its template, e.g., "C303".
@@ -21,7 +21,7 @@ _X_PLACEHOLDER = re.compile(
     r"(?:(?P<hint>[A-Za-z/]+)-)?(?<![A-Za-z0-9])(?P<x>[Xx])(?![A-Za-z0-9])"
 )
 
-class ClaimTemplate(_Frozen):
+class ClaimTemplate(Frozen):
     template_id: Annotated[TemplateID, _NON_EMPTY]
     topic: Annotated[TopicName, _NON_EMPTY]
     subtopic: NonEmptyStr

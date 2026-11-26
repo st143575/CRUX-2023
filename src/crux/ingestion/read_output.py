@@ -6,14 +6,15 @@ Used for both the gold output and the system output for Task 1.
 from __future__ import annotations
 
 import csv
-from crux.domain.output import OUTPUT_COLUMNS
+from crux.domain.output import OUTPUT_COLUMNS, OutputClaimFrameFields
 from crux.ingestion.issues import IngestionIssue
 from pathlib import Path
 
 
-def read_claim_rows(path: Path) -> tuple[tuple[tuple[str, ...], ...], list[IngestionIssue]]:
+def read_output_claim_frames(path: Path) -> tuple[tuple[OutputClaimFrameFields, ...], list[IngestionIssue]]:
     """
-    Read a 12-column tab-separated claim frame file.
+    Read either the 35-column LDC claim frame annotation file and map it to the 12-column system output format,
+    or read a 12-column system output file directly.
 
     Args:
         path: Path to a gold or system output file for Task 1.
@@ -21,7 +22,7 @@ def read_claim_rows(path: Path) -> tuple[tuple[tuple[str, ...], ...], list[Inges
     Returns:
         A tuple of (rows, issues). Each row is a tuple of 12 strings in OUTPUT_COLUMNS order.
     """
-    rows: list[tuple[str, ...]] = []
+    rows: list[OutputClaimFrameFields] = []
     issues: list[IngestionIssue] = []
     first_line: dict[str, int] = {}
 
@@ -49,7 +50,6 @@ def read_claim_rows(path: Path) -> tuple[tuple[tuple[str, ...], ...], list[Inges
         
         # Get the order of columns
         order = [header.index(c) for c in OUTPUT_COLUMNS]
-        claim_id_col = OUTPUT_COLUMNS.index("claim_id")
 
         for fields in reader:
             where = f"line {reader.line_num}"
@@ -60,12 +60,13 @@ def read_claim_rows(path: Path) -> tuple[tuple[tuple[str, ...], ...], list[Inges
                 issues.append(IngestionIssue.error(path, where, f"row has {len(fields)} columns, expected {len(header)}"))
                 continue
             
-            row = tuple(fields[i] for i in order)
+            row = OutputClaimFrameFields(*[fields[i] for i in order])
+            
             empty = [c for c, v in zip(OUTPUT_COLUMNS, row) if not v.strip()]
             if empty:
                 issues.append(IngestionIssue.warning(path, where, f"empty fields: {empty}"))
 
-            claim_id = row[claim_id_col]
+            claim_id = row.claim_id
             if claim_id in first_line:
                 issues.append(IngestionIssue.error(path, where, f"duplicate claim_id: {claim_id} (first at line {first_line[claim_id]}), skipped"))
                 continue

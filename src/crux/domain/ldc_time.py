@@ -8,10 +8,11 @@ import re
 from datetime import date
 from enum import StrEnum
 from pydantic import Field, model_validator
-from ._base import _Frozen
+from .base import Frozen
+from .missing_value import EMPTY_NA
 
 
-_UNKNOWN_TOKENS = frozenset({"unknown", "EMPTY_NA", ""})
+CLAIM_DATETIME_UNKNOWN_TOKENS = frozenset({"unknown", EMPTY_NA, ""})
 _PARTS = ("year", "month", "day", "hour", "minute", "second")
 _PATTERN_CLAIMDATETIME = re.compile(
     r"(before|on|after)\s+"
@@ -32,7 +33,7 @@ class ClaimDatetimeType(StrEnum):
     ON = "on"
     AFTER = "after"
 
-class ClaimDatetime(_Frozen):
+class ClaimDatetime(Frozen):
     """
     When a claim was made. Components that the document does not give are None.
     A fully unknown claim datetime is represented by None, not by this class.
@@ -56,7 +57,7 @@ class ClaimDatetime(_Frozen):
     @classmethod
     def parse(cls, raw: str) -> ClaimDatetime | None:
         raw = raw.strip()
-        if raw in _UNKNOWN_TOKENS:
+        if raw in CLAIM_DATETIME_UNKNOWN_TOKENS:
             return None
         m = _PATTERN_CLAIMDATETIME.fullmatch(raw)
         if m is None:
@@ -83,7 +84,7 @@ class KEDateBound(StrEnum):
     START = "start"
     END = "end"
 
-class KEDate(_Frozen):
+class KEDate(Frozen):
     bound: KEDateBound
     type: ClaimDatetimeType   # Reuse before / on / after
     year: int | None = Field(default=None, ge=1, le=9999)
@@ -101,7 +102,7 @@ class KEDate(_Frozen):
     @classmethod
     def parse(cls, raw: str) -> KEDate | None:
         raw = raw.strip()
-        if raw in _UNKNOWN_TOKENS or raw.startswith(("startunk", "endunk")):
+        if raw in CLAIM_DATETIME_UNKNOWN_TOKENS or raw.startswith(("startunk", "endunk")):
             return None
         m = _PATTERN_KEDATE.fullmatch(raw)
         if m is None:
