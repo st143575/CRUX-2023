@@ -25,5 +25,4 @@ docs/
 src/crux/eval/scorers.ipynb
 
 # Files
-src/crux/eval/scorers.py
 run_tests.sh
